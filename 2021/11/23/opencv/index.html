@@ -30,6 +30,7 @@
 <meta property="og:description" content="rtsp后台视频流搭建  1234567wget  http:&#x2F;&#x2F;www.live555.com&#x2F;liveMedia&#x2F;public&#x2F;live555-latest.tar.gztar xzf live555-latest.tar.gzcd live.&#x2F;genMakefiles linux-64bit    #注意后面这个参数是根据当前文件夹下config.&lt;后缀&gt;获取得到的makecd">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211123151226557.png">
+<meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20220309175859987.png">
 <meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211123153836430.png">
 <meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211123154630135.png">
 <meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211123154924271.png">
@@ -39,7 +40,7 @@
 <meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211130174239356.png">
 <meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211223141710233.png">
 <meta property="article:published_time" content="2021-11-23T07:00:05.000Z">
-<meta property="article:modified_time" content="2022-02-16T06:55:17.221Z">
+<meta property="article:modified_time" content="2022-03-21T04:46:22.042Z">
 <meta property="article:author" content="Admin">
 <meta property="article:tag" content="opencv">
 <meta name="twitter:card" content="summary">
@@ -243,7 +244,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-16 14:55:17" itemprop="dateModified" datetime="2022-02-16T14:55:17+08:00">2022-02-16</time>
+                <time title="修改时间：2022-03-21 12:46:22" itemprop="dateModified" datetime="2022-03-21T12:46:22+08:00">2022-03-21</time>
               </span>
 
           
@@ -269,6 +270,8 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wget  http://www.live555.com/liveMedia/public/live555-latest.tar.gz</span><br><span class="line">tar xzf live555-latest.tar.gz</span><br><span class="line">cd live</span><br><span class="line">./genMakefiles linux-64bit    #注意后面这个参数是根据当前文件夹下config.&lt;后缀&gt;获取得到的</span><br><span class="line">make</span><br><span class="line">cd mediaServer</span><br><span class="line">./live555MediaServer   # 启动rtsp服务</span><br></pre></td></tr></table></figure>
 
 <h4 id="ffmpeg"><a href="#ffmpeg" class="headerlink" title="ffmpeg"></a>ffmpeg</h4><ul>
+<li><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/67878761">https://zhuanlan.zhihu.com/p/67878761</a></p>
+</li>
 <li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43474959/article/details/105366800">https://blog.csdn.net/qq_43474959/article/details/105366800</a></p>
 </li>
 <li><p>FFmpeg是一套可以用来记录、转换数字音频、视频，并能将其转化为流的开源计算机程序</p>
@@ -286,14 +289,40 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg –i test.avi –r 1 –f image2 image-%3d.jpeg //提取图片</span><br><span class="line">ffmpeg -ss 0:1:30 -t 0:0:20 -i input.avi -vcodec copy -acodec copy output.avi //剪切视频</span><br></pre></td></tr></table></figure>
 
 <p>3.视频流推流(rtmp)</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -re -i rtsp://<span class="number">192.168</span><span class="number">.17</span><span class="number">.6</span>/video/lhj.mkv -vcodec libx264 -acodec aac -f flv rtmp:/<span class="number">192.168</span><span class="number">.17</span><span class="number">.6</span>:<span class="number">1935</span>/hls/test.mp4</span><br></pre></td></tr></table></figure>
+<ul>
+<li>拉取摄像机RTSP流，推送给RTMP服务器 -vcodec copy -acodec copy (限于摄像机提供的就为H.264+AAC的码流)</li>
+<li>若不是则-vcodec copy<code>改为</code>-vcodec libx264<code>，</code>-acodec copy<code>改为</code>-acodec aac</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i rtsp://<span class="number">10.21</span><span class="number">.6</span><span class="number">.11</span>/video/<span class="number">2.</span>mkv  -vcodec libx264 -preset:v ultrafast -tune:v zerolatency -acodec copy -f flv  rtmp://<span class="number">10.21</span><span class="number">.6</span><span class="number">.12</span>/live/livestream</span><br></pre></td></tr></table></figure>
 
 <p>4.视频流推流(rtsp)</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg <span class="literal">-re</span> <span class="literal">-stream_loop</span> <span class="literal">-1</span> <span class="literal">-i</span> <span class="number">2</span>.mp4 <span class="literal">-c</span> <span class="built_in">copy</span> <span class="operator">-f</span> rtsp rtsp://<span class="number">10.21</span>.<span class="number">6.11</span>/video</span><br></pre></td></tr></table></figure>
 
+<h4 id="srs"><a href="#srs" class="headerlink" title="srs"></a>srs</h4><ul>
+<li>(Simple RTMP Server)  是国人写的一款非常优秀的开源流媒体服务器软件，可用于直播/录播/视频客服等多种场景，其定位是运营级的互联网直播服务器集群</li>
+</ul>
+<p>docker启动</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">eip=<span class="variable">$</span>(ifconfig eth0|grep <span class="string">&#x27;inet &#x27;</span>|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> [[ ! -<span class="type">z</span> <span class="variable">$eip</span> ]]; then</span><br><span class="line">  docker run <span class="literal">-d</span> -<span class="literal">-rm</span> -<span class="literal">-env</span> CANDIDATE=<span class="variable">$</span>(ifconfig eth0|grep <span class="string">&#x27;inet &#x27;</span>|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>) \</span><br><span class="line">      <span class="literal">-p</span> <span class="number">1935</span>:<span class="number">1935</span> <span class="literal">-p</span> <span class="number">8080</span>:<span class="number">8080</span> <span class="literal">-p</span> <span class="number">1985</span>:<span class="number">1985</span> <span class="literal">-p</span> <span class="number">8000</span>:<span class="number">8000</span>/udp \</span><br><span class="line">      registry.cn<span class="literal">-hangzhou</span>.aliyuncs.com/ossrs/srs:v4.<span class="number">0.76</span> \</span><br><span class="line">      objs/srs <span class="literal">-c</span> conf/rtc.conf</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
 
+<p>ffmpeg推流</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://10.21.6.12:8080/live/livestream.flv">http://10.21.6.12:8080/live/livestream.flv</a></li>
+<li>webrtc://10.21.6.12/live/livestream</li>
+<li>rtmp://10.21.6.12/live/livestream</li>
+<li><img src="/2021/11/23/opencv/image-20220309175859987.png" alt="opencv"></li>
+</ul>
+<p><code>将rtsp视频流推流到srs</code></p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg <span class="literal">-re</span> <span class="literal">-i</span> rtsp://<span class="number">10.21</span>.<span class="number">6.11</span>/video/<span class="number">2</span>.mkv <span class="literal">-vcodec</span> libx264 <span class="literal">-acodec</span> aac <span class="operator">-f</span> flv   rtmp://<span class="number">10.21</span>.<span class="number">6.12</span>/live/livestream</span><br></pre></td></tr></table></figure>
 
+<p><code>循环将本地文件推流到srs</code></p>
+<ul>
+<li>nohup不挂断的运行，并没有后台运行的功能，就是指，用nohup运行命令可以使命令永久的执行下去</li>
+<li>&amp; 后台运行</li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vi push.sh</span><br><span class="line">chmod +x push.sh</span><br><span class="line"></span><br><span class="line">nohup ffmpeg <span class="literal">-threads</span> <span class="number">2</span> <span class="literal">-re</span> <span class="literal">-fflags</span> +genpts <span class="literal">-stream_loop</span> <span class="literal">-1</span>  <span class="literal">-i</span> ./input.mp4  <span class="literal">-vcodec</span> libx264 <span class="literal">-preset</span>:v ultrafast <span class="literal">-tune</span>:v zerolatency <span class="literal">-acodec</span> <span class="built_in">copy</span> <span class="operator">-f</span>  flv <span class="literal">-y</span>  rtmp://<span class="number">10.21</span>.<span class="number">6.12</span>/live/input &amp;</span><br><span class="line"></span><br><span class="line">nohup ffmpeg <span class="literal">-threads</span> <span class="number">2</span> <span class="literal">-re</span> <span class="literal">-fflags</span> +genpts <span class="literal">-stream_loop</span> <span class="literal">-1</span>  <span class="literal">-i</span> ./output.mp4  <span class="literal">-vcodec</span> libx264 <span class="literal">-preset</span>:v ultrafast <span class="literal">-tune</span>:v zerolatency <span class="literal">-acodec</span> <span class="built_in">copy</span> <span class="operator">-f</span>  flv <span class="literal">-y</span>  rtmp://<span class="number">10.21</span>.<span class="number">6.12</span>/live/output &amp;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
+<p><code>批量杀包含ffmpeg进程</code></p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ps</span> <span class="literal">-ef</span> | grep ffmpeg | grep <span class="literal">-v</span> grep | cut <span class="literal">-c</span> <span class="number">9</span><span class="literal">-15</span> | xargs <span class="built_in">kill</span> <span class="literal">-9</span></span><br></pre></td></tr></table></figure>
 
 <h4 id="nginx-rtmp搭建视频点播"><a href="#nginx-rtmp搭建视频点播" class="headerlink" title="nginx+rtmp搭建视频点播"></a>nginx+rtmp搭建视频点播</h4><ul>
 <li>已下载nginx</li>
@@ -354,7 +383,7 @@
 
 <p>ubuntu</p>
 <p><img src="/2021/11/23/opencv/image-20211223141710233.png" alt="opencv"></p>
-<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pip install opencv<span class="literal">-python</span> <span class="literal">-i</span> https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line">pip install opencv<span class="literal">-contrib</span><span class="literal">-python</span> <span class="literal">-i</span> https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line"></span><br><span class="line">apt<span class="literal">-get</span> install <span class="literal">-y</span> libgl1<span class="literal">-mesa</span><span class="literal">-dev</span></span><br><span class="line">apt<span class="literal">-get</span> install libgtk2.<span class="number">0</span><span class="literal">-dev</span> pkg<span class="literal">-config</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pip install opencv<span class="literal">-python</span> <span class="literal">-i</span> https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line">pip install opencv<span class="literal">-contrib</span><span class="literal">-python</span> <span class="literal">-i</span> https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line"></span><br><span class="line">apt<span class="literal">-get</span> update</span><br><span class="line">apt<span class="literal">-get</span> install <span class="literal">-y</span> libgl1<span class="literal">-mesa</span><span class="literal">-dev</span></span><br><span class="line">apt<span class="literal">-get</span> install libgtk2.<span class="number">0</span><span class="literal">-dev</span> pkg<span class="literal">-config</span></span><br></pre></td></tr></table></figure>
 
 
     </div>
@@ -449,7 +478,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#rtsp%E5%90%8E%E5%8F%B0%E8%A7%86%E9%A2%91%E6%B5%81%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">rtsp后台视频流搭建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ffmpeg"><span class="nav-number">2.</span> <span class="nav-text">ffmpeg</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-rtmp%E6%90%AD%E5%BB%BA%E8%A7%86%E9%A2%91%E7%82%B9%E6%92%AD"><span class="nav-number">3.</span> <span class="nav-text">nginx+rtmp搭建视频点播</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ffmpeg%E6%8E%A8%E6%9C%AC%E5%9C%B0%E6%91%84%E5%83%8F%E5%A4%B4%E5%BD%95%E5%83%8F%E5%88%B0rtmp%E6%9C%8D%E5%8A%A1%E5%90%8E%E5%8F%B0"><span class="nav-number">4.</span> <span class="nav-text">ffmpeg推本地摄像头录像到rtmp服务后台</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#opencv%E6%88%AA%E5%8F%96rtmp%E8%A7%86%E9%A2%91%E6%B5%81%E5%AD%98%E6%94%BEmongodb"><span class="nav-number">5.</span> <span class="nav-text">opencv截取rtmp视频流存放mongodb</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81"><span class="nav-number">6.</span> <span class="nav-text">直播推流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%89%E6%B5%81"><span class="nav-number">7.</span> <span class="nav-text">拉流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Celery-gt-Flower-gt-Prometheus-gt-Grafana"><span class="nav-number">8.</span> <span class="nav-text">Celery -&gt; Flower -&gt; Prometheus -&gt; Grafana</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#linux%E5%AE%89%E8%A3%85opencv%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3"><span class="nav-number">9.</span> <span class="nav-text">linux安装opencv问题解决</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#rtsp%E5%90%8E%E5%8F%B0%E8%A7%86%E9%A2%91%E6%B5%81%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">rtsp后台视频流搭建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ffmpeg"><span class="nav-number">2.</span> <span class="nav-text">ffmpeg</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#srs"><span class="nav-number">3.</span> <span class="nav-text">srs</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-rtmp%E6%90%AD%E5%BB%BA%E8%A7%86%E9%A2%91%E7%82%B9%E6%92%AD"><span class="nav-number">4.</span> <span class="nav-text">nginx+rtmp搭建视频点播</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ffmpeg%E6%8E%A8%E6%9C%AC%E5%9C%B0%E6%91%84%E5%83%8F%E5%A4%B4%E5%BD%95%E5%83%8F%E5%88%B0rtmp%E6%9C%8D%E5%8A%A1%E5%90%8E%E5%8F%B0"><span class="nav-number">5.</span> <span class="nav-text">ffmpeg推本地摄像头录像到rtmp服务后台</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#opencv%E6%88%AA%E5%8F%96rtmp%E8%A7%86%E9%A2%91%E6%B5%81%E5%AD%98%E6%94%BEmongodb"><span class="nav-number">6.</span> <span class="nav-text">opencv截取rtmp视频流存放mongodb</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81"><span class="nav-number">7.</span> <span class="nav-text">直播推流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%89%E6%B5%81"><span class="nav-number">8.</span> <span class="nav-text">拉流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Celery-gt-Flower-gt-Prometheus-gt-Grafana"><span class="nav-number">9.</span> <span class="nav-text">Celery -&gt; Flower -&gt; Prometheus -&gt; Grafana</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#linux%E5%AE%89%E8%A3%85opencv%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3"><span class="nav-number">10.</span> <span class="nav-text">linux安装opencv问题解决</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -465,14 +494,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -546,7 +575,7 @@ $(document).ready(function() {
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共60.2k字</span>
+  <span class="post-count">博客全站共109.2k字</span>
 </div>
         
 <div class="busuanzi-count">
