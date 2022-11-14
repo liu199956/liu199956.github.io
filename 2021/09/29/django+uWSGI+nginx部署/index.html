@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="WSGI uWSGI uwsgi123WSGI:Web服务器网关接口（Python Web Server Gateway Interface，缩写为WSGI）是为Python语言定义的Web服务器和Web应用程序或框架之间的一种简单而通用的接口uWSGI:它是一个Web服务器（类似的有wsgiref，gunicorn），它实现了WSGI协议、uwsgi、http等协议。用于接收前端服务器转发的动态">
+<meta property="og:type" content="article">
+<meta property="og:title" content="django+uWSGI+nginx部署">
+<meta property="og:url" content="http://example.com/2021/09/29/django+uWSGI+nginx%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="Admin">
+<meta property="og:description" content="WSGI uWSGI uwsgi123WSGI:Web服务器网关接口（Python Web Server Gateway Interface，缩写为WSGI）是为Python语言定义的Web服务器和Web应用程序或框架之间的一种简单而通用的接口uWSGI:它是一个Web服务器（类似的有wsgiref，gunicorn），它实现了WSGI协议、uwsgi、http等协议。用于接收前端服务器转发的动态">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-09-29T03:53:00.000Z">
+<meta property="article:modified_time" content="2022-08-25T08:38:22.453Z">
+<meta property="article:author" content="Admin">
+<meta property="article:tag" content="uWSGI">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/09/29/django+uWSGI+nginx%E9%83%A8%E7%BD%B2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>django+uWSGI+nginx部署 | Admin</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Admin" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Admin</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/29/django+uWSGI+nginx%E9%83%A8%E7%BD%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Admin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Admin">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          django+uWSGI+nginx部署
+        </h1>
+
+        <div class="post-meta">
+		<!-- 设置置顶标志 -->
+			
+			  <i class="fa fa-thumb-tack"></i>
+			  <font color=7D26CD>置顶</font>
+			  <span class="post-meta-divider">|</span>
+			
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-09-29 11:53:00" itemprop="dateCreated datePublished" datetime="2021-09-29T11:53:00+08:00">2021-09-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-25 16:38:22" itemprop="dateModified" datetime="2022-08-25T16:38:22+08:00">2022-08-25</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="WSGI-uWSGI-uwsgi"><a href="#WSGI-uWSGI-uwsgi" class="headerlink" title="WSGI uWSGI uwsgi"></a>WSGI uWSGI uwsgi</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WSGI:Web服务器网关接口（Python Web Server Gateway Interface，缩写为WSGI）是为Python语言定义的Web服务器和Web应用程序或框架之间的一种简单而通用的接口</span><br><span class="line">uWSGI:它是一个Web服务器（类似的有wsgiref，gunicorn），它实现了WSGI协议、uwsgi、http等协议。用于接收前端服务器转发的动态请求并处理后发给 web 应用程序。</span><br><span class="line">uwsgi:它是uWSGI服务器实现的独有的协议，用于定义传输信息的类型，是用于前端服务器与 uwsgi 的通信规范</span><br></pre></td></tr></table></figure>
+
+<p>WSGI有什么问题</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">你可能会问“为什么不升级 WSGI”？多年来，这个问题已经被问过很多次，问题通常最终是 WSGI 的单一可调用接口不适合 WebSocket 等更多涉及的 Web 协议。</span><br><span class="line"></span><br><span class="line">WSGI 应用程序是一个单一的、同步的可调用对象，它接受一个请求并返回一个响应；这不允许长期连接，就像您使用长轮询 HTTP 或 WebSocket 连接一样。</span><br><span class="line"></span><br><span class="line">即使我们使这个可调用异步，它仍然只有一个提供请求的路径，因此具有多个传入事件（如接收 WebSocket 帧）的协议无法触发它。</span><br></pre></td></tr></table></figure>
+
+<p>ASGI如何工作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ASGI 被构造为单个异步可调用对象。它需要一个scope，它<span class="built_in">dict</span>包含有关特定连接的详细信息 send，一个异步可调用对象，它允许应用程序向客户端发送事件消息，以及receive一个异步调用对象，它允许应用程序从客户端接收事件消息。</span><br><span class="line"></span><br><span class="line">这不仅允许每个应用程序有多个传入事件和传出事件，还允许后台协程，以便应用程序可以做其他事情（例如侦听外部触发器上的事件，如 Redis 队列）</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="项目流程"><a href="#项目流程" class="headerlink" title="项目流程"></a>项目流程</h4><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">首先客户端请求服务资源，</span><br><span class="line">nginx作为直接对外的服务接口,接收到客户端发送过来的http请求,会解包、分析，</span><br><span class="line">如果是静态文件请求就根据nginx配置的静态文件目录，返回请求的资源，</span><br><span class="line">如果是动态的请求,nginx就通过配置文件,将请求传递给uWSGI；uWSGI 将接收到的包进行处理，并转发给wsgi，</span><br><span class="line">wsgi根据请求调用django工程的某个文件或函数，处理完后django将返回值交给wsgi，</span><br><span class="line">wsgi将返回值进行打包，转发给uWSGI，</span><br><span class="line">uWSGI接收后转发给nginx,nginx最终将返回值返回给客户端(如浏览器)。</span><br><span class="line"><span class="emphasis">*注:不同的组件之间传递信息涉及到数据格式和协议的转换</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="配置pip源"><a href="#配置pip源" class="headerlink" title="配置pip源"></a>配置pip源</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd &amp;&amp; mkdir .pip</span><br><span class="line">cd .pip </span><br><span class="line">vim pip.conf</span><br><span class="line">[<span class="keyword">global</span>]</span><br><span class="line">index-url = https://pypi.tuna.tsinghua.edu.cn/simple</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装python"><a href="#安装python" class="headerlink" title="安装python"></a>安装python</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">1）前往用户根目录</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">: <span class="built_in">cd</span> ~</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">: yum install zlib-devel bzip2-devel ncurses-devel  <span class="comment"># 安装依赖</span></span></span><br><span class="line">2）下载 或 上传 Python3.6.7</span><br><span class="line"><span class="meta">#</span><span class="bash"> 服务器终端</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">: wget https://www.python.org/ftp/python/3.6.7/Python-3.6.7.tar.xz</span></span><br><span class="line"></span><br><span class="line">3）解压安装包</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">: tar -xf Python-3.6.7.tar.xz</span></span><br><span class="line"></span><br><span class="line">4）进入目标文件</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">: <span class="built_in">cd</span> Python-3.6.7</span></span><br><span class="line"></span><br><span class="line">5）配置安装路径：mkdir /usr/local/python3</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">: ./configure --prefix=/usr/<span class="built_in">local</span>/python3 <span class="comment"># 如果报错</span></span></span><br><span class="line">	yum install gcc -y  # 安装gcc编译工具</span><br><span class="line"></span><br><span class="line">6）编译并安装</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">: make &amp;&amp; sudo make install</span></span><br><span class="line"></span><br><span class="line">7）建立软连接：终端命令 python3，pip3</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">: ls -l /usr/bin | grep python <span class="comment">#查看软连接</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">: ln -s /usr/<span class="built_in">local</span>/python3/bin/python3.6 /usr/bin/python3</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">: ln -s /usr/<span class="built_in">local</span>/python3/bin/pip3.6 /usr/bin/pip3</span></span><br><span class="line"></span><br><span class="line">8）删除安装包与文件：</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">: rm -rf Python-3.6.7</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">: rm -rf Python-3.6.7.tar.xz</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="解决linux下pip报错"><a href="#解决linux下pip报错" class="headerlink" title="解决linux下pip报错"></a>解决linux下pip报错</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>安装相关依赖</span><br><span class="line">yum install gcc libffi-devel zlib* openssl-devel</span><br><span class="line"><span class="number">2.</span>安装openssl</span><br><span class="line">wget https://github.com/openssl/openssl/archive/OpenSSL_1_1_1d.tar.gz</span><br><span class="line">tar -zxvf OpenSSL_1_1_1d.tar.gz</span><br><span class="line">mkdir openssl</span><br><span class="line">cd OpenSSL_1_1_1d</span><br><span class="line"><span class="number">3.</span>编译安装</span><br><span class="line">./config --prefix=/usr/local/openssl</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"><span class="number">4.</span>替换当前系统旧版本openssl</span><br><span class="line">mv /usr/<span class="built_in">bin</span>/openssl /usr/<span class="built_in">bin</span>/openssl.old</span><br><span class="line">mv /usr/lib64/openssl /usr/lib64/openssl.old</span><br><span class="line">mv /usr/lib64/libssl.so /usr/lib64/libssl.so.old</span><br><span class="line">ln -s /usr/local/openssl/<span class="built_in">bin</span>/openssl /usr/<span class="built_in">bin</span>/openssl</span><br><span class="line">ln -s /usr/local/openssl/include/openssl /usr/include/openssl</span><br><span class="line">ln -s /usr/local/openssl/lib/libssl.so /usr/lib64/libssl.so</span><br><span class="line">echo <span class="string">&quot;/usr/local/openssl/lib&quot;</span> &gt;&gt; /etc/ld.so.conf</span><br><span class="line">ldconfig -v </span><br><span class="line"><span class="number">5.</span>查看版本</span><br><span class="line">openssl version</span><br><span class="line">openssl: error <span class="keyword">while</span> loading shared libraries: libcrypto.so<span class="number">.1</span><span class="number">.1</span>: cannot <span class="built_in">open</span> shared <span class="built_in">object</span> file: No such file <span class="keyword">or</span> directory</span><br><span class="line"><span class="comment"># 若查看版本报错加上下面两句      -s软连接 -snf重新指定软链接         </span></span><br><span class="line">ln -s /usr/local/openssl/lib/libcrypto.so<span class="number">.1</span><span class="number">.1</span> /usr/lib64/libcrypto.so<span class="number">.1</span><span class="number">.1</span></span><br><span class="line"></span><br><span class="line">ln -snf /usr/local/openssl/lib/libcrypto.so<span class="number">.1</span><span class="number">.1</span> /usr/lib64/libcrypto.so<span class="number">.1</span><span class="number">.1</span></span><br><span class="line">[root@FCY-SRV03 openssl-OpenSSL_1_1_1d]<span class="comment"># openssl version</span></span><br><span class="line">OpenSSL <span class="number">1.1</span><span class="number">.1</span>d  <span class="number">10</span> Sep <span class="number">2019</span></span><br><span class="line"></span><br><span class="line"><span class="number">6.</span>重新安装python</span><br><span class="line">mkdir python3</span><br><span class="line">cd Python-<span class="number">3.8</span><span class="number">.5</span></span><br><span class="line">./configure --prefix=/usr/local/python3 --<span class="keyword">with</span>-openssl=/usr/local/openssl</span><br><span class="line">make &amp;&amp; sudo make install</span><br><span class="line"><span class="comment"># 如果出现pip警告</span></span><br><span class="line">echo <span class="string">&#x27;export PATH=/usr/local/python3/bin:$PATH&#x27;</span> &gt;&gt;~/.bashrc</span><br><span class="line">source ~/.bashrc</span><br><span class="line"><span class="comment"># 建立软连接</span></span><br><span class="line">ln -s /usr/local/python3/<span class="built_in">bin</span>/python3 /usr/<span class="built_in">bin</span>/python3</span><br><span class="line">ln -s /usr/local/python3/<span class="built_in">bin</span>/pip3 /usr/<span class="built_in">bin</span>/pip3</span><br><span class="line"><span class="comment"># 验证</span></span><br><span class="line">python3 -v</span><br><span class="line">pip3 -v</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置python虚拟环境"><a href="#配置python虚拟环境" class="headerlink" title="配置python虚拟环境"></a>配置python虚拟环境</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">pip3 install virtualenvwrapper</span><br><span class="line">vim ~/.bashrc</span><br><span class="line"><span class="comment"># 增加配置</span></span><br><span class="line">export PATH=/usr/local/python3/<span class="built_in">bin</span>:$PATH</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">VIRTUALENVWRAPPER_PYTHON=/usr/local/python3/<span class="built_in">bin</span>/python3    <span class="comment"># 指定virtualenvwrapper执行的python版本</span></span><br><span class="line">export WORKON_HOME=/root/.virtualenv    <span class="comment"># 指定虚拟环境存放目录，.virtualenvs目录名可自拟</span></span><br><span class="line">source /usr/local/python3/<span class="built_in">bin</span>/virtualenvwrapper.sh    <span class="comment"># virtualenvwrapper.sh所在目录</span></span><br><span class="line">source ~/.bashrc <span class="comment"># 激活配置</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建虚拟环境</span></span><br><span class="line">mkvirtualenv test</span><br><span class="line"><span class="comment"># 使用虚拟环境</span></span><br><span class="line">workon test</span><br><span class="line"><span class="comment"># 退出虚拟环境</span></span><br><span class="line">deactivate</span><br><span class="line"><span class="comment"># 删除虚拟环境</span></span><br><span class="line">rmvirtualenv test</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装uwsgi"><a href="#安装uwsgi" class="headerlink" title="安装uwsgi"></a>安装uwsgi</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果安装过程中报错</span></span><br><span class="line"><span class="comment"># 1.下载相对对应python版本的python-devel</span></span><br><span class="line"><span class="comment"># 2.openssl版本不对，安装1.1以上，卸载yum安装的openssl-devel</span></span><br><span class="line">yum remove openssl-devel</span><br><span class="line">openssl version</span><br><span class="line">pip install uwsgi</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装nginx"><a href="#安装nginx" class="headerlink" title="安装nginx"></a>安装nginx</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>）前往用户根目录</span><br><span class="line">cd /usr/local/</span><br><span class="line">mkdir nginx</span><br><span class="line">yum -y install gcc pcre-devel zlib-devel openssl openssl-devel </span><br><span class="line"></span><br><span class="line"><span class="number">2</span>）下载nginx1<span class="number">.13</span><span class="number">.7</span></span><br><span class="line">wget http://nginx.org/download/nginx-<span class="number">1.13</span><span class="number">.7</span>.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>）解压安装包</span><br><span class="line">tar -xf nginx-<span class="number">1.13</span><span class="number">.7</span>.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>）进入目标文件</span><br><span class="line">cd nginx-<span class="number">1.13</span><span class="number">.7</span></span><br><span class="line"></span><br><span class="line"><span class="number">5</span>）配置安装路径：</span><br><span class="line">&gt;: ./configure --prefix=/usr/local/nginx</span><br><span class="line"></span><br><span class="line"><span class="number">6</span>）编译并安装</span><br><span class="line">&gt;: make &amp;&amp; sudo make install</span><br><span class="line"></span><br><span class="line"><span class="number">7</span>）建立软连接：终端命令 nginx</span><br><span class="line">&gt;: ln -s /usr/local/nginx/sbin/nginx /usr/<span class="built_in">bin</span>/nginx</span><br><span class="line"></span><br><span class="line"><span class="number">8</span>）删除安装包与文件：</span><br><span class="line">&gt;: cd ~</span><br><span class="line">&gt;: rm -rf nginx-<span class="number">1.13</span><span class="number">.7</span></span><br><span class="line">&gt;: rm -rf nginx-<span class="number">1.13</span><span class="number">.7</span>.tar.xz</span><br><span class="line"></span><br><span class="line"><span class="number">9</span>）测试Nginx环境，服务器运行nginx，本地访问服务器ip</span><br><span class="line">&gt;: nginx</span><br><span class="line">&gt;: 服务器绑定的域名 或 ip:<span class="number">80</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#Nginx命令</span></span><br><span class="line"><span class="number">1</span>）启动</span><br><span class="line">&gt;: nginx</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>）关闭nginx</span><br><span class="line">&gt;: nginx -s stop</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>）重启nginx</span><br><span class="line">&gt;: nginx -s reload</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>）查看端口，强行关闭</span><br><span class="line">&gt;: ps -aux|grep nginx</span><br><span class="line">&gt;: kill &lt;pid:进程编号&gt;</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+
+<h4 id="配置uwsgi-ini"><a href="#配置uwsgi-ini" class="headerlink" title="配置uwsgi.ini"></a>配置uwsgi.ini</h4><ul>
+<li>需要在django项目根目录（与manage.py同级目录）下，vim uwsgi.ini，写入相关配置</li>
+<li>启动：uwsgi –ini uwsgi.ini<br>停止：uwsgi –stop uwsgi.pid<br>重启：uwsgi –reload uwsgi.pid</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[uwsgi]</span><br><span class="line"><span class="comment">#项目目录</span></span><br><span class="line">chdir=/usr/local/project/AlgorithmServer</span><br><span class="line"><span class="comment">#指定项目application</span></span><br><span class="line">module=AlgorithmServer.wsgi:application</span><br><span class="line">home=/root/.virtualenv/AlgorithmServer</span><br><span class="line"><span class="comment">#指定sock的文件路径（nginx使用）</span></span><br><span class="line">socket=<span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="number">9001</span></span><br><span class="line"><span class="comment">#http=0.0.0.0:8000</span></span><br><span class="line"><span class="comment"># 进程个数（processess一样效果）</span></span><br><span class="line">processes=<span class="number">4</span></span><br><span class="line"><span class="built_in">max</span>-requests=<span class="number">5000</span></span><br><span class="line"><span class="comment">#指定启动时的pid文件路径</span></span><br><span class="line">pidfile=/usr/local/project/AlgorithmServer/uwsgi.pid</span><br><span class="line"><span class="comment">#启用主进程</span></span><br><span class="line">master=<span class="literal">True</span></span><br><span class="line"><span class="comment">#自动移除unix Socket和pid文件当服务停止的时候</span></span><br><span class="line">vacuum=<span class="literal">True</span></span><br><span class="line"><span class="comment">#设置日志目录</span></span><br><span class="line">daemonize=/usr/local/project/AlgorithmServer/uwsgi.log</span><br></pre></td></tr></table></figure>
+
+<h4 id="收集静态资源"><a href="#收集静态资源" class="headerlink" title="收集静态资源"></a>收集静态资源</h4><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/project/AlgorithmServer</span><br><span class="line">mkdir static</span><br><span class="line">chmod 777 static/</span><br><span class="line">python manage.py collectstatic</span><br></pre></td></tr></table></figure>
+
+<h4 id="Django项目配置"><a href="#Django项目配置" class="headerlink" title="Django项目配置"></a>Django项目配置</h4><ul>
+<li>settings.py</li>
+</ul>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line">import sys</span><br><span class="line">from os import path</span><br><span class="line">from pathlib import Path</span><br><span class="line"></span><br><span class="line"><span class="section"># Build paths inside the project like this: BASE<span class="emphasis">_DIR / &#x27;subdir&#x27;.</span></span></span><br><span class="line"><span class="emphasis"><span class="section">BASE_</span>DIR = Path(<span class="strong">__file__</span>).resolve().parent.parent</span></span><br><span class="line">sys.path.insert(0, path.join(BASE<span class="emphasis">_DIR, &#x27;apps&#x27;))</span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis"># Application definition</span></span><br><span class="line"><span class="emphasis">INSTALLED_</span>APPS = [</span><br><span class="line"><span class="code">    &#x27;rest_framework&#x27;,</span></span><br><span class="line"><span class="code">    &#x27;drf_spectacular&#x27;,</span></span><br><span class="line"><span class="code">    &#x27;django_filters&#x27;,</span></span><br><span class="line"><span class="code"> ]</span></span><br><span class="line"><span class="code"> </span></span><br><span class="line"><span class="code"> </span></span><br><span class="line"><span class="code">TEMPLATES = [</span></span><br><span class="line"><span class="code">    &#123;</span></span><br><span class="line"><span class="code">        &#x27;BACKEND&#x27;: &#x27;django.template.backends.django.DjangoTemplates&#x27;,</span></span><br><span class="line"><span class="code">        &#x27;DIRS&#x27;: [BASE_DIR / &#x27;templates&#x27;]</span></span><br><span class="line"><span class="code">        ,</span></span><br><span class="line"><span class="code">        &#x27;APP_DIRS&#x27;: True,</span></span><br><span class="line"><span class="code">        &#x27;OPTIONS&#x27;: &#123;</span></span><br><span class="line"><span class="code">            &#x27;context_processors&#x27;: [</span></span><br><span class="line"><span class="code">                &#x27;django.template.context_processors.debug&#x27;,</span></span><br><span class="line"><span class="code">                &#x27;django.template.context_processors.request&#x27;,</span></span><br><span class="line"><span class="code">                &#x27;django.contrib.auth.context_processors.auth&#x27;,</span></span><br><span class="line"><span class="code">                &#x27;django.contrib.messages.context_processors.messages&#x27;,</span></span><br><span class="line"><span class="code">            ],</span></span><br><span class="line"><span class="code">        &#125;,</span></span><br><span class="line"><span class="code">    &#125;,</span></span><br><span class="line"><span class="code">]</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="section"># Internationalization</span></span><br><span class="line"><span class="section"># https://docs.djangoproject.com/en/3.2/topics/i18n/</span></span><br><span class="line"></span><br><span class="line">LANGUAGE<span class="emphasis">_CODE = &#x27;zh-hans&#x27;</span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis">TIME_</span>ZONE = &#x27;Asia/Shanghai&#x27;</span><br><span class="line"></span><br><span class="line">USE<span class="emphasis">_I18N = True</span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis">USE_</span>L10N = True</span><br><span class="line"></span><br><span class="line">USE<span class="emphasis">_TZ = False</span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis"># Static files (CSS, JavaScript, Images)</span></span><br><span class="line"><span class="emphasis"># https://docs.djangoproject.com/en/3.2/howto/static-files/</span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis">STATIC_</span>URL = &#x27;/static/&#x27;</span><br><span class="line">STATIC<span class="emphasis">_ROOT = &#x27;static&#x27;</span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis"># Default primary key field type</span></span><br><span class="line"><span class="emphasis"># https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field</span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis">DEFAULT_</span>AUTO<span class="emphasis">_FIELD = &#x27;django.db.models.BigAutoField&#x27;</span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis">#MEDIA_</span>ROOT = &#x27;media&#x27;</span><br><span class="line"></span><br><span class="line">MEDIA<span class="emphasis">_URL = &#x27;/media/&#x27;</span></span><br><span class="line"><span class="emphasis">MEDIA_</span>ROOT = &#x27;media&#x27;</span><br><span class="line"></span><br><span class="line"><span class="section"># Custom settings</span></span><br><span class="line">DATETIME<span class="emphasis">_FORMAT = &#x27;%Y-%m-%d %H:%M:%S&#x27;</span></span><br><span class="line"><span class="emphasis">DATE_</span>FORMAT = &#x27;%Y-%m-%d&#x27;</span><br><span class="line"></span><br><span class="line"><span class="section"># Django Rest Framework settings</span></span><br><span class="line">REST<span class="emphasis">_FRAMEWORK = &#123;</span></span><br><span class="line"><span class="emphasis">    # Use Django&#x27;s standard `django.contrib.auth` permissions,</span></span><br><span class="line"><span class="emphasis">    # or allow read-only access for unauthenticated users.</span></span><br><span class="line"><span class="emphasis">    &#x27;DEFAULT_</span>PERMISSION<span class="emphasis">_CLASSES&#x27;: [</span></span><br><span class="line"><span class="emphasis">        &#x27;rest_</span>framework.permissions.AllowAny&#x27;,</span><br><span class="line"><span class="code">    ],</span></span><br><span class="line"><span class="code">    &#x27;DEFAULT_SCHEMA_CLASS&#x27;: &#x27;drf_spectacular.openapi.AutoSchema&#x27;,</span></span><br><span class="line"><span class="code">    &#x27;DATETIME_FORMAT&#x27;: DATETIME_FORMAT,</span></span><br><span class="line"><span class="code">    &#x27;DATETIME_INPUT_FORMATS&#x27;: [DATETIME_FORMAT],</span></span><br><span class="line"><span class="code">    &#x27;DATE_FORMAT&#x27;: DATE_FORMAT,</span></span><br><span class="line"><span class="code">    &#x27;DATE_INPUT_FORMATS&#x27;: [DATE_FORMAT],</span></span><br><span class="line"><span class="code">    &#x27;DEFAULT_FILTER_BACKENDS&#x27;: [&#x27;django_filters.rest_framework.DjangoFilterBackend&#x27;],</span></span><br><span class="line"><span class="code">    &#x27;DEFAULT_PAGINATION_CLASS&#x27;: &#x27;rest_framework.pagination.PageNumberPagination&#x27;,</span></span><br><span class="line"><span class="code">    &#x27;PAGE_SIZE&#x27;: 10,</span></span><br><span class="line"><span class="code">    # &#x27;DEFAULT_RENDERER_CLASSES&#x27;: [&#x27;utils.renderers.MyJSONRender&#x27;],</span></span><br><span class="line"><span class="code">    &#x27;EXCEPTION_HANDLER&#x27;: &#x27;utils.exception_handler.custom_exception_handler&#x27;</span></span><br><span class="line"><span class="code">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>urls.py</li>
+</ul>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">from django.urls import path, include</span><br><span class="line">from django.conf import settings</span><br><span class="line">from django.conf.urls.static import static</span><br><span class="line"></span><br><span class="line">from django.views.generic import RedirectView</span><br><span class="line">from drf<span class="emphasis">_spectacular.views import SpectacularAPIView, SpectacularSwaggerView</span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis">urlpatterns = [</span></span><br><span class="line"><span class="emphasis">    path(&#x27;&#x27;, RedirectView.as_</span>view(url=&#x27;docs/&#x27;)),</span><br><span class="line"><span class="code">    path(&#x27;api/schema/&#x27;, SpectacularAPIView.as_view(), name=&#x27;schema&#x27;),</span></span><br><span class="line"><span class="code">    path(&#x27;docs/&#x27;, SpectacularSwaggerView.as_view(url_name=&#x27;schema&#x27;), name=&#x27;swagger-ui&#x27;),</span></span><br><span class="line"><span class="code">    path(&#x27;admin/&#x27;, admin.site.urls),</span></span><br><span class="line"><span class="code">]</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">if settings.DEBUG:</span><br><span class="line"><span class="code">    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) </span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="nginx配置文件"><a href="#nginx配置文件" class="headerlink" title="nginx配置文件"></a>nginx配置文件</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">events &#123;</span><br><span class="line">    worker_connections  <span class="number">1024</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  application/octet<span class="literal">-stream</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#log_format  main  &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span></span><br><span class="line">    <span class="comment">#                  &#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span></span><br><span class="line">    <span class="comment">#                  &#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#access_log  logs/access.log  main;</span></span><br><span class="line"></span><br><span class="line">    sendfile        on;</span><br><span class="line">    <span class="comment">#tcp_nopush     on;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#keepalive_timeout  0;</span></span><br><span class="line">    keepalive_timeout  <span class="number">65</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">#gzip  on;</span></span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen       <span class="number">80</span>;</span><br><span class="line">        server_name  <span class="number">192.168</span>.<span class="number">17.6</span>;</span><br><span class="line">        charset utf<span class="literal">-8</span>;</span><br><span class="line">        <span class="comment">#access_log  /usr/local/project/AlgorithmServer/nginx_access.log;</span></span><br><span class="line">        <span class="comment">#error_log  /usr/local/project/AlgorithmServer/nginx_error.log;</span></span><br><span class="line">        client_max_body_size <span class="number">75</span>M;</span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">           include /usr/local/nginx/conf/uwsgi_params;</span><br><span class="line">           uwsgi_pass  <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">9001</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">	 location /<span class="keyword">static</span> &#123;</span><br><span class="line">           alias  /usr/local/project/AlgorithmServer/<span class="keyword">static</span>;</span><br><span class="line">        &#125;              </span><br><span class="line"></span><br><span class="line">        <span class="comment">#error_page  404              /404.html;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># redirect server error pages to the static page /50x.html</span></span><br><span class="line">        <span class="comment">#</span></span><br><span class="line">        error_page   <span class="number">500</span> <span class="number">502</span> <span class="number">503</span> <span class="number">504</span>  /<span class="number">50</span>x.html;</span><br><span class="line">        location = /<span class="number">50</span>x.html &#123;</span><br><span class="line">            root   html;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="Flask部署"><a href="#Flask部署" class="headerlink" title="Flask部署"></a>Flask部署</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">FROM python:<span class="number">3.9</span></span><br><span class="line">ENV PYTHONDONTWRITEBYTECODE=<span class="number">1</span></span><br><span class="line">ENV PYTHONUNBUFFERED=<span class="number">1</span></span><br><span class="line">WORKDIR /backend</span><br><span class="line"><span class="built_in">COPY</span> ./backend .</span><br><span class="line">RUN pip install  -<span class="literal">-no</span><span class="literal">-cache</span><span class="literal">-dir</span> <span class="literal">-r</span> requirements.txt <span class="literal">-i</span> https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line">EXPOSE <span class="number">5000</span></span><br><span class="line"><span class="comment"># 命令启动</span></span><br><span class="line">uwsgi -<span class="literal">-socket</span> <span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">5000</span> -<span class="literal">-protocol</span>=http <span class="literal">-p</span> <span class="number">3</span> <span class="literal">-w</span> server:app</span><br><span class="line"><span class="comment"># 配置文件</span></span><br><span class="line">[<span class="type">uwsgi</span>]</span><br><span class="line"><span class="comment">#项目目录</span></span><br><span class="line"><span class="built_in">chdir</span>=/backend</span><br><span class="line"><span class="comment">#指定项目application</span></span><br><span class="line"><span class="comment"># server启动脚本:对应里面的app</span></span><br><span class="line">module=server:app</span><br><span class="line"><span class="comment">#指定sock的文件路径（nginx使用）</span></span><br><span class="line"><span class="comment">#socket=0.0.0.0:5000</span></span><br><span class="line">http=<span class="number">0.0</span>.<span class="number">0.0</span>:<span class="number">5000</span></span><br><span class="line"><span class="comment"># 进程个数（processess一样效果）</span></span><br><span class="line">processes=<span class="number">4</span></span><br><span class="line">max<span class="literal">-requests</span>=<span class="number">5000</span></span><br><span class="line"><span class="comment">#指定启动时的pid文件路径</span></span><br><span class="line">pidfile=/backend/uwsgi.pid</span><br><span class="line"><span class="comment">#启用主进程</span></span><br><span class="line">master=True</span><br><span class="line"><span class="comment">#自动移除unix Socket和pid文件当服务停止的时候</span></span><br><span class="line">vacuum=True</span><br><span class="line"><span class="comment">#设置日志目录</span></span><br><span class="line">daemonize=/backend/uwsgi.log</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+	  
+	  
+		   <div>
+			 <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:20px;">-------------End-------------</div>
+    
+</div>
+		   </div>
+	   
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/uWSGI/" rel="tag"># uWSGI</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/09/04/RabbitMQ/" rel="prev" title="RabbitMQ">
+      <i class="fa fa-chevron-left"></i> RabbitMQ
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/10/25/restframework/" rel="next" title="restframework">
+      restframework <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#WSGI-uWSGI-uwsgi"><span class="nav-number">1.</span> <span class="nav-text">WSGI uWSGI uwsgi</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">项目流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEpip%E6%BA%90"><span class="nav-number">3.</span> <span class="nav-text">配置pip源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85python"><span class="nav-number">4.</span> <span class="nav-text">安装python</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3linux%E4%B8%8Bpip%E6%8A%A5%E9%94%99"><span class="nav-number">5.</span> <span class="nav-text">解决linux下pip报错</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEpython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="nav-number">6.</span> <span class="nav-text">配置python虚拟环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85uwsgi"><span class="nav-number">7.</span> <span class="nav-text">安装uwsgi</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85nginx"><span class="nav-number">8.</span> <span class="nav-text">安装nginx</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEuwsgi-ini"><span class="nav-number">9.</span> <span class="nav-text">配置uwsgi.ini</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%B6%E9%9B%86%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90"><span class="nav-number">10.</span> <span class="nav-text">收集静态资源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Django%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AE"><span class="nav-number">11.</span> <span class="nav-text">Django项目配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">12.</span> <span class="nav-text">nginx配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Flask%E9%83%A8%E7%BD%B2"><span class="nav-number">13.</span> <span class="nav-text">Flask部署</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Admin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Admin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-07 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Admin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共151.4k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

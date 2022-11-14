@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="简介 RabbitMq 是实现了高级消息队列协议（AMQP）的开源消息代理中间件。消息队列是一种应用程序对应用程序的通行方式，应用程序通过写消息，将消息传递于队列，由另一应用程序读取 完成通信。而作为中间件的 RabbitMq 无疑是目前最流行的消息队列之一  1234# 应用场景系统的高可用：日常生活当中各种商城秒杀，高流量，高并发的场景。当服务器接收到如此大量请求处理业务时，有宕机的风险。某些">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ">
+<meta property="og:url" content="http://example.com/2021/09/04/RabbitMQ/index.html">
+<meta property="og:site_name" content="Admin">
+<meta property="og:description" content="简介 RabbitMq 是实现了高级消息队列协议（AMQP）的开源消息代理中间件。消息队列是一种应用程序对应用程序的通行方式，应用程序通过写消息，将消息传递于队列，由另一应用程序读取 完成通信。而作为中间件的 RabbitMq 无疑是目前最流行的消息队列之一  1234# 应用场景系统的高可用：日常生活当中各种商城秒杀，高流量，高并发的场景。当服务器接收到如此大量请求处理业务时，有宕机的风险。某些">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/09/04/RabbitMQ/image-20210905231220486.png">
+<meta property="og:image" content="http://example.com/2021/09/04/RabbitMQ/image-20210905231408847.png">
+<meta property="og:image" content="http://example.com/2021/09/04/RabbitMQ/image-20210905231555985.png">
+<meta property="og:image" content="http://example.com/2021/09/04/RabbitMQ/image-20210905231852033.png">
+<meta property="og:image" content="http://example.com/2021/09/04/RabbitMQ/image-20210905232051467.png">
+<meta property="og:image" content="http://example.com/2021/09/04/RabbitMQ/image-20211112125648863.png">
+<meta property="og:image" content="http://example.com/2021/09/04/RabbitMQ/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3VuaXF1ZV9wZXJmZWN0,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="http://example.com/2021/09/04/RabbitMQ/image-20211106011125448.png">
+<meta property="og:image" content="http://example.com/2021/09/04/RabbitMQ/20201030230122209.png">
+<meta property="og:image" content="http://example.com/2021/09/04/RabbitMQ/image-20211106012409207.png">
+<meta property="article:published_time" content="2021-09-04T10:00:11.000Z">
+<meta property="article:modified_time" content="2021-11-12T04:58:02.236Z">
+<meta property="article:author" content="Admin">
+<meta property="article:tag" content="RabbitMQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/09/04/RabbitMQ/image-20210905231220486.png">
+
+<link rel="canonical" href="http://example.com/2021/09/04/RabbitMQ/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>RabbitMQ | Admin</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Admin" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Admin</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/04/RabbitMQ/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Admin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Admin">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RabbitMQ
+        </h1>
+
+        <div class="post-meta">
+		<!-- 设置置顶标志 -->
+			
+			  <i class="fa fa-thumb-tack"></i>
+			  <font color=7D26CD>置顶</font>
+			  <span class="post-meta-divider">|</span>
+			
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-09-04 18:00:11" itemprop="dateCreated datePublished" datetime="2021-09-04T18:00:11+08:00">2021-09-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-12 12:58:02" itemprop="dateModified" datetime="2021-11-12T12:58:02+08:00">2021-11-12</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><ul>
+<li>RabbitMq 是实现了高级消息队列协议（AMQP）的开源消息代理中间件。消息队列是一种应用程序对应用程序的通行方式，应用程序通过写消息，将消息传递于队列，由另一应用程序读取 完成通信。而作为中间件的 RabbitMq 无疑是目前最流行的消息队列之一</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 应用场景</span></span><br><span class="line">系统的高可用：日常生活当中各种商城秒杀，高流量，高并发的场景。当服务器接收到如此大量请求处理业务时，有宕机的风险。某些业务可能极其复杂，但这部分不是高时效性，不需要立即反馈给用户，我们可以将这部分处理请求抛给队列，让程序后置去处理，减轻服务器在高并发场景下的压力。</span><br><span class="line"></span><br><span class="line">分布式系统，集成系统，子系统之间的对接，以及架构设计中常常需要考虑消息队列的应用</span><br></pre></td></tr></table></figure>
+
+<h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Broker：简单来说就是消息队列服务器实体。</span><br><span class="line">Exchange：消息交换机，它指定消息按什么规则，路由到哪个队列。</span><br><span class="line">Queue：消息队列载体，每个消息都会被投入到一个或多个队列。</span><br><span class="line">Binding：绑定，它的作用就是把exchange和queue按照路由规则绑定起来。</span><br><span class="line">Routing Key：路由关键字，exchange根据这个关键字进行消息投递。</span><br><span class="line">vhost：虚拟主机，一个broker里可以开设多个vhost，用作不同用户的权限分离。</span><br><span class="line">producer：消息生产者，就是投递消息的程序。</span><br><span class="line">consumer：消息消费者，就是接受消息的程序。</span><br><span class="line">channel：消息通道，在客户端的每个连接里，可建立多个channel，每个channel代表一个会话任务</span><br></pre></td></tr></table></figure>
+
+<h4 id="轮询模式"><a href="#轮询模式" class="headerlink" title="轮询模式"></a>轮询模式</h4><ul>
+<li>此模式下，发送队列的一方把消息存入mq的指定队列后，若有消费者端联入相应队列，即会获取到消息，并且队列中的消息会被消费掉。<br>若有多个消费端同时连接着队列，则会已轮询的方式将队列中的消息消费掉</li>
+</ul>
+<p><strong>生产者</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pika</span><br><span class="line"></span><br><span class="line">credentials = pika.PlainCredentials(<span class="string">&#x27;guest&#x27;</span>, <span class="string">&#x27;guest&#x27;</span>)</span><br><span class="line">connection = pika.BlockingConnection(pika.ConnectionParameters(</span><br><span class="line">    <span class="string">&#x27;127.0.0.1&#x27;</span>,  <span class="comment"># MQ地址(本机)</span></span><br><span class="line">    <span class="number">5672</span>,  <span class="comment"># 端口号</span></span><br><span class="line">    <span class="string">&#x27;/&#x27;</span>,  <span class="comment"># 虚拟主机</span></span><br><span class="line">    credentials  <span class="comment"># 用户名|密码</span></span><br><span class="line">))</span><br><span class="line">channel = connection.channel()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 声明queue</span></span><br><span class="line">channel.queue_declare(</span><br><span class="line">    queue=<span class="string">&#x27;queue_name_test&#x27;</span>,  <span class="comment"># 队列名</span></span><br><span class="line">    durable=<span class="literal">True</span>)  <span class="comment"># 使队列持久化</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># n RabbitMQ a message can never be sent directly to the queue, it always needs to go through an exchange.</span></span><br><span class="line">channel.basic_publish(exchange=<span class="string">&#x27;&#x27;</span>,</span><br><span class="line">                      routing_key=<span class="string">&#x27;queue_name_test&#x27;</span>,</span><br><span class="line">                      body=<span class="string">&#x27;Hello World!&#x27;</span>,</span><br><span class="line">                      properties=pika.BasicProperties(delivery_mode=<span class="number">2</span>, ))  <span class="comment"># 消息持久化</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot; [x] Sent &#x27;Hello World!&#x27;&quot;</span>)</span><br><span class="line">connection.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>消费者</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">import pika</span><br><span class="line">import time</span><br><span class="line"></span><br><span class="line">auth = pika.PlainCredentials(</span><br><span class="line">    username=&#x27;guest&#x27;,</span><br><span class="line">    password=&#x27;guest&#x27;,</span><br><span class="line">)  # 用户名 / 密码</span><br><span class="line">connection = pika.BlockingConnection(</span><br><span class="line">    pika.ConnectionParameters(</span><br><span class="line">        &#x27;127.0.0.1&#x27;,  # RabbitMQ 地址</span><br><span class="line">        5672,  # 端口号</span><br><span class="line">        &#x27;/&#x27;,  # 虚拟主机</span><br><span class="line">        auth,  # 验证</span><br><span class="line">    )</span><br><span class="line">)  # 链接RabbitMQ</span><br><span class="line">channel = connection.channel()  # 创建RabbitMQ通道</span><br><span class="line"></span><br><span class="line">channel.queue_declare(</span><br><span class="line">    queue=&#x27;queue_name_test&#x27;,  # 消费对列名</span><br><span class="line">    durable=True,  # 持久化</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def callback(ch, method, properties, body):</span><br><span class="line">    print(&quot;消费者:  %r&quot; % body)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">channel.basic_consume(  # 消费信息</span><br><span class="line">    queue=&#x27;queue_name_test&#x27;,  # 对列名</span><br><span class="line">    # auto_ack=True,  # 自动回应 ，一般不写，如果机器宕机消息就丢失</span><br><span class="line">    on_message_callback=callback,  # 如果接收到消息，就调用callback回调消息</span><br><span class="line">)</span><br><span class="line">time.sleep(5)  # 模拟消费时间</span><br><span class="line">print(&quot;消费者&quot;)</span><br><span class="line">channel.start_consuming()  # 开始消费</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="模拟轮询"><a href="#模拟轮询" class="headerlink" title="模拟轮询"></a>模拟轮询</h4><p><strong>生产者</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pika</span><br><span class="line"></span><br><span class="line">credentials = pika.PlainCredentials(<span class="string">&#x27;guest&#x27;</span>, <span class="string">&#x27;guest&#x27;</span>)</span><br><span class="line">connection = pika.BlockingConnection(pika.ConnectionParameters(</span><br><span class="line">    <span class="string">&#x27;127.0.0.1&#x27;</span>,  <span class="comment"># MQ地址(本机)</span></span><br><span class="line">    <span class="number">5672</span>,  <span class="comment"># 端口号</span></span><br><span class="line">    <span class="string">&#x27;/&#x27;</span>,  <span class="comment"># 虚拟主机</span></span><br><span class="line">    credentials  <span class="comment"># 用户名|密码</span></span><br><span class="line">))</span><br><span class="line">channel = connection.channel()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 声明queue</span></span><br><span class="line">channel.queue_declare(</span><br><span class="line">    queue=<span class="string">&#x27;queue_name_test&#x27;</span>,  <span class="comment"># 队列名</span></span><br><span class="line">    durable=<span class="literal">True</span>)  <span class="comment"># 使队列持久化</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 轮询模式</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">    channel.basic_publish(exchange=<span class="string">&#x27;&#x27;</span>,</span><br><span class="line">                          routing_key=<span class="string">&#x27;queue_name_test&#x27;</span>,</span><br><span class="line">                          body=<span class="string">&#x27;Hello World &#123;&#125;!&#x27;</span>.<span class="built_in">format</span>(i),</span><br><span class="line">                          properties=pika.BasicProperties(delivery_mode=<span class="number">2</span>, ))  <span class="comment"># 消息持久化</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot; [x] Sent &#x27;Hello World!&#x27;&quot;</span>)</span><br><span class="line">connection.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>新建3个文件消费者（分别启动）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">consumer1打印：消费者:  <span class="string">b&#x27;Hello World 2!&#x27;</span></span><br><span class="line">consumer2打印：消费者:  <span class="string">b&#x27;Hello World 0!&#x27;</span></span><br><span class="line">			  消费者:  <span class="string">b&#x27;Hello World 3!&#x27;</span></span><br><span class="line">consumer3打印：消consumer2打印：费者:  <span class="string">b&#x27;Hello World 1!&#x27;</span></span><br><span class="line">消费者:  <span class="string">b&#x27;Hello World 4!&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>设置权重</strong></p>
+<ul>
+<li>RabbitMQ给消费者发消息的时候检测下消费者里的消息数量，如果超过指定值（比如1条），就不给你发了。<br>只需要在消费者端，channel.basic_consume前加上就可以了</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">channel.basic_qos(prefetch_count=<span class="number">1</span>)  <span class="comment"># 类似权重，按能力分发，如果有一个消息，就不在给你发</span></span><br><span class="line">channel.basic_consume(  </span><br><span class="line"><span class="comment"># auto_ack=True,  # 自动回应要注释</span></span><br><span class="line">)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>闲置消费</strong></p>
+<ul>
+<li><p>正常情况如果有多个消费者，是按照顺序第一个消息给第一个消费者，第二个消息给第二个消费者</p>
+<p>但是可能第一个消息的消费者处理消息很耗时，一直没结束，就可以让第二个消费者优先获得闲置的消息</p>
+</li>
+<li><p>consumer</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pika</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">auth = pika.PlainCredentials(username=<span class="string">&#x27;guest&#x27;</span>,password=<span class="string">&#x27;guest&#x27;</span>)  </span><br><span class="line">connection = pika.BlockingConnection(pika.ConnectionParameters(<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">5672</span>,  <span class="string">&#x27;/&#x27;</span>, auth,))</span><br><span class="line"> </span><br><span class="line">channel = connection.channel()  </span><br><span class="line"></span><br><span class="line">channel.queue_declare( queue=<span class="string">&#x27;queue_name_test&#x27;</span>, durable=<span class="literal">True</span>, </span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">callback</span>(<span class="params">ch, method, properties, body</span>):</span></span><br><span class="line">    ch.basic_ack(delivery_tag=method.delivery_tag)</span><br><span class="line">	<span class="built_in">print</span>(body)</span><br><span class="line"></span><br><span class="line">channel.basic_qos(prefetch_count=<span class="number">1</span>) </span><br><span class="line">channel.basic_consume(  </span><br><span class="line">    queue=<span class="string">&#x27;queue_name_test&#x27;</span>,  </span><br><span class="line">    <span class="comment"># auto_ack=True,  # 自动回应 ，一般不写，如果机器宕机消息就丢失</span></span><br><span class="line">    on_message_callback=callback,  </span><br><span class="line">)</span><br><span class="line">time.sleep(<span class="number">5</span>)  <span class="comment"># 模拟消费时间</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;消费者&quot;</span>)</span><br><span class="line">channel.start_consuming()  <span class="comment"># 开始消费</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="消息持久化"><a href="#消息持久化" class="headerlink" title="消息持久化"></a>消息持久化</h4><ul>
+<li><strong>每次声明队列的时候，都加上durable</strong>，注意每个队列都得写，客户端、服务端声明的时候都得写，需要重新写一个队列。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">channel.queue_declare(queue=<span class="string">&#x27;hello2&#x27;</span>, durable=<span class="literal">True</span>) <span class="comment"># 队列持久化</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>producter</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">properties=pika.BasicProperties(</span><br><span class="line">    delivery_mode=<span class="number">2</span>,  <span class="comment"># 消息持久化，服务器宕机重启消息不会丢失</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<h4 id="ack消息确认机制"><a href="#ack消息确认机制" class="headerlink" title="ack消息确认机制"></a>ack消息确认机制</h4><ul>
+<li>producer</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pika</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">credentials = pika.PlainCredentials(<span class="string">&quot;guest&quot;</span>,<span class="string">&quot;guest&quot;</span>)</span><br><span class="line"></span><br><span class="line">connection = pika.BlockingConnection(pika.ConnectionParameters(<span class="string">&#x27;127.0.0.1&#x27;</span>,credentials=credentials))</span><br><span class="line">channel = connection.channel()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">channel.queue_declare(<span class="string">&#x27;hello&#x27;</span>, durable=<span class="literal">True</span>)</span><br><span class="line">channel.basic_publish(exchange=<span class="string">&#x27;&#x27;</span>, routing_key=<span class="string">&#x27;hello&#x27;</span>, body=<span class="string">&#x27;Hello World!&#x27;</span>, properties=pika.BasicProperties(</span><br><span class="line">    delivery_mode=<span class="number">2</span>, ))   </span><br><span class="line">connection.close()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>consumer</li>
+<li>生产者端消息持久后,需要在消费者端加上(ch.basic_ack(delivery_tag =method.delivery_tag)): 保证消息被消费后，消费端发送一个ack，然后服务端从队列删除该消息.</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pika</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">credentials = pika.PlainCredentials(<span class="string">&quot;guest&quot;</span>,<span class="string">&quot;guest&quot;</span>)</span><br><span class="line">connection = pika.BlockingConnection(pika.ConnectionParameters(<span class="string">&#x27;127.0.0.1&#x27;</span>,credentials=credentials))</span><br><span class="line">channel = connection.channel()</span><br><span class="line"><span class="comment"># 有可能客户端先启动，hello这个队列可能不存在，它也要声明</span></span><br><span class="line"><span class="comment"># 如果队列存在，就不创建，如果队列不存在，就创建</span></span><br><span class="line">channel.queue_declare(queue=<span class="string">&#x27;hello&#x27;</span>, durable=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">callback</span>(<span class="params">ch, method, properties, body</span>):</span></span><br><span class="line">    <span class="comment"># 通知服务端，消息取走了，如果auto_ack=False，不加下面，消息会一直存在</span></span><br><span class="line">    ch.basic_ack(delivery_tag=method.delivery_tag)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot; 我从队列中取到了：%s&quot;</span> % body)</span><br><span class="line"></span><br><span class="line">channel.basic_consume(queue=<span class="string">&#x27;hello&#x27;</span>, on_message_callback=callback, auto_ack=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">channel.start_consuming()</span><br></pre></td></tr></table></figure>
+
+<h4 id="广播模式"><a href="#广播模式" class="headerlink" title="广播模式"></a>广播模式</h4><ul>
+<li><p>rabbitmq 的发布与订阅要借助交换机（Exchange）的原理实现</p>
+</li>
+<li><p>Exchange 一共有三种工作模式：<strong>fanout, direct, topicd</strong></p>
+</li>
+<li><p>需要queue和exchange绑定，因为消费者不是和exchange直连的，消费者是连在queue上，queue绑定在exchange上，消费者只会在queue里拿消息</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">          |------------------------|</span><br><span class="line">          |            /—— queue &lt;—|—&gt; consumer1</span><br><span class="line">producer —|—exchange1 &lt;bind        |                 </span><br><span class="line">       \  |            \—— queue &lt;—|—&gt; consumer2</span><br><span class="line">        \-|-exchange2    ……        |</span><br><span class="line">          |------------------------|</span><br></pre></td></tr></table></figure>
+
+<p><strong>fanout</strong></p>
+<p>这种模式下，传递到 exchange 的消息将会<strong>转发到所有</strong>与其绑定的 queue 上。</p>
+<ul>
+<li>不需要指定 routing_key ，即使指定了也是无效。</li>
+<li>需要提前将 exchange 和 queue 绑定，一个 exchange 可以绑定多个 queue，一个queue可以绑定多个exchange。</li>
+<li>需要先启动 <strong>订阅者</strong>，此模式下的队列是 consumer 随机生成的，<strong>发布者</strong> 仅仅发布消息到 exchange ，由 exchange 转发消息至 queue。</li>
+</ul>
+<p><strong>发布者</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pika</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">credentials = pika.PlainCredentials(<span class="string">&#x27;guest&#x27;</span>, <span class="string">&#x27;guest&#x27;</span>)  <span class="comment"># mq用户名和密码</span></span><br><span class="line"><span class="comment"># 虚拟队列需要指定参数 virtual_host，如果是默认的可以不填。</span></span><br><span class="line">connection = pika.BlockingConnection(</span><br><span class="line">    pika.ConnectionParameters(host=<span class="string">&#x27;127.0.0.1&#x27;</span>, port=<span class="number">5672</span>, virtual_host=<span class="string">&#x27;/&#x27;</span>, credentials=credentials))</span><br><span class="line">channel = connection.channel()</span><br><span class="line"><span class="comment"># 声明exchange，由exchange指定消息在哪个队列传递，如不存在，则创建。durable = True 代表exchange持久化存储，False 非持久化存储</span></span><br><span class="line">channel.exchange_declare(exchange=<span class="string">&#x27;python-test&#x27;</span>, durable=<span class="literal">True</span>, exchange_type=<span class="string">&#x27;fanout&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    message = json.dumps(&#123;<span class="string">&#x27;OrderId&#x27;</span>: <span class="string">&quot;1000%s&quot;</span> % i&#125;)</span><br><span class="line">    <span class="comment"># 向队列插入数值 routing_key是队列名。delivery_mode = 2 声明消息在队列中持久化，delivery_mod = 1 消息非持久化。routing_key 不需要配置</span></span><br><span class="line">    channel.basic_publish(exchange=<span class="string">&#x27;python-test&#x27;</span>, routing_key=<span class="string">&#x27;&#x27;</span>, body=message,</span><br><span class="line">                          properties=pika.BasicProperties(delivery_mode=<span class="number">2</span>))</span><br><span class="line">    <span class="built_in">print</span>(message)</span><br><span class="line">connection.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>订阅者</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pika</span><br><span class="line"></span><br><span class="line">credentials = pika.PlainCredentials(<span class="string">&#x27;guest&#x27;</span>, <span class="string">&#x27;guest&#x27;</span>)</span><br><span class="line">connection = pika.BlockingConnection(pika.ConnectionParameters(host = <span class="string">&#x27;127.0.0.1&#x27;</span>,port = <span class="number">5672</span>,virtual_host = <span class="string">&#x27;/&#x27;</span>,credentials = credentials))</span><br><span class="line">channel = connection.channel()</span><br><span class="line"><span class="comment"># 创建临时队列,队列名传空字符，consumer关闭后，队列自动删除</span></span><br><span class="line">result = channel.queue_declare(<span class="string">&#x27;&#x27;</span>,exclusive=<span class="literal">True</span>)</span><br><span class="line"><span class="comment"># 声明exchange，由exchange指定消息在哪个队列传递，如不存在，则创建。durable = True 代表exchange持久化存储，False 非持久化存储</span></span><br><span class="line">channel.exchange_declare(exchange = <span class="string">&#x27;python-test&#x27;</span>,durable = <span class="literal">True</span>, exchange_type=<span class="string">&#x27;fanout&#x27;</span>)</span><br><span class="line"><span class="comment"># 绑定exchange和队列  exchange 使我们能够确切地指定消息应该到哪个队列去</span></span><br><span class="line">channel.queue_bind(exchange = <span class="string">&#x27;python-test&#x27;</span>,queue = result.method.queue)</span><br><span class="line"><span class="comment"># 定义一个回调函数来处理消息队列中的消息，这里是打印出来</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">callback</span>(<span class="params">ch, method, properties, body</span>):</span></span><br><span class="line">    ch.basic_ack(delivery_tag = method.delivery_tag)</span><br><span class="line">    <span class="built_in">print</span>(body.decode())</span><br><span class="line"></span><br><span class="line">channel.basic_consume(result.method.queue,callback,<span class="comment"># 设置成 False，在调用callback函数时，未收到确认标识，消息会重回队列。True，无论调用callback成功与否，消息都被消费掉</span></span><br><span class="line">                      auto_ack = <span class="literal">False</span>)</span><br><span class="line">channel.start_consuming()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p> <strong>direct</strong></p>
+<p>这种工作模式的原理是 消息发送至 exchange，exchange 根据 <strong>路由键（routing_key）</strong>转发到相对应的 queue 上。</p>
+<ul>
+<li> 可以使用默认 exchange =’ ‘ ，也可以自定义 exchange</li>
+<li>这种模式下不需要将 exchange 和 任何进行绑定，当然绑定也是可以的。可以将 exchange 和 queue ，routing_key 和 queue 进行绑定</li>
+<li>传递或接受消息时 需要 <strong>指定 routing_key</strong></li>
+<li>需要先启动 <strong>订阅者</strong>，此模式下的队列是 consumer 随机生成的，<strong>发布者</strong> 仅仅发布消息到 exchange ，由 exchange 转发消息至 queue。</li>
+</ul>
+<p><strong>发布者</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pika</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">credentials = pika.PlainCredentials(<span class="string">&#x27;guest&#x27;</span>, <span class="string">&#x27;guest&#x27;</span>)  <span class="comment"># mq用户名和密码</span></span><br><span class="line"><span class="comment"># 虚拟队列需要指定参数 virtual_host，如果是默认的可以不填。</span></span><br><span class="line">connection = pika.BlockingConnection(</span><br><span class="line">    pika.ConnectionParameters(host=<span class="string">&#x27;127.0.0.1&#x27;</span>, port=<span class="number">5672</span>, virtual_host=<span class="string">&#x27;/&#x27;</span>, credentials=credentials))</span><br><span class="line">channel = connection.channel()</span><br><span class="line"><span class="comment"># 声明exchange，由exchange指定消息在哪个队列传递，如不存在，则创建。durable = True 代表exchange持久化存储，False 非持久化存储</span></span><br><span class="line">channel.exchange_declare(exchange=<span class="string">&#x27;python1-test&#x27;</span>, durable=<span class="literal">True</span>, exchange_type=<span class="string">&#x27;direct&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    message = json.dumps(&#123;<span class="string">&#x27;OrderId&#x27;</span>: <span class="string">&quot;1000%s&quot;</span> % i&#125;)</span><br><span class="line">    <span class="comment"># 指定 routing_key.delivery_mode = 2 声明消息在队列中持久化，delivery_mod = 1 消息非持久化</span></span><br><span class="line">    channel.basic_publish(exchange=<span class="string">&#x27;python1-test&#x27;</span>, routing_key=<span class="string">&#x27;OrderId&#x27;</span>, body=message,</span><br><span class="line">                          properties=pika.BasicProperties(delivery_mode=<span class="number">2</span>))</span><br><span class="line">    <span class="built_in">print</span>(message)</span><br><span class="line">connection.close()</span><br></pre></td></tr></table></figure>
+
+<p><strong>订阅者</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pika</span><br><span class="line"></span><br><span class="line">credentials = pika.PlainCredentials(<span class="string">&#x27;guest&#x27;</span>, <span class="string">&#x27;guest&#x27;</span>)</span><br><span class="line">connection = pika.BlockingConnection(</span><br><span class="line">    pika.ConnectionParameters(host=<span class="string">&#x27;127.0.0.1&#x27;</span>, port=<span class="number">5672</span>, virtual_host=<span class="string">&#x27;/&#x27;</span>, credentials=credentials))</span><br><span class="line">channel = connection.channel()</span><br><span class="line"><span class="comment"># 创建临时队列，队列名传空字符，consumer关闭后，队列自动删除</span></span><br><span class="line">result = channel.queue_declare(<span class="string">&#x27;&#x27;</span>, exclusive=<span class="literal">True</span>)</span><br><span class="line"><span class="comment"># 声明exchange，由exchange指定消息在哪个队列传递，如不存在，则创建。durable = True 代表exchange持久化存储，False 非持久化存储</span></span><br><span class="line">channel.exchange_declare(exchange=<span class="string">&#x27;python1-test&#x27;</span>, durable=<span class="literal">True</span>, exchange_type=<span class="string">&#x27;direct&#x27;</span>)</span><br><span class="line"><span class="comment"># 绑定exchange和队列  exchange 使我们能够确切地指定消息应该到哪个队列去</span></span><br><span class="line">channel.queue_bind(exchange=<span class="string">&#x27;python1-test&#x27;</span>, queue=result.method.queue, routing_key=<span class="string">&#x27;OrderId&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个回调函数来处理消息队列中的消息，这里是打印出来</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">callback</span>(<span class="params">ch, method, properties, body</span>):</span></span><br><span class="line">    ch.basic_ack(delivery_tag=method.delivery_tag)</span><br><span class="line">    <span class="built_in">print</span>(body.decode())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># channel.basic_qos(prefetch_count=1)</span></span><br><span class="line"><span class="comment"># 告诉rabbitmq，用callback来接受消息</span></span><br><span class="line">channel.basic_consume(result.method.queue, callback,</span><br><span class="line">                      <span class="comment"># 设置成 False，在调用callback函数时，未收到确认标识，消息会重回队列。True，无论调用callback成功与否，消息都被消费掉</span></span><br><span class="line">                      auto_ack=<span class="literal">False</span>)</span><br><span class="line">channel.start_consuming()</span><br></pre></td></tr></table></figure>
+
+<h4 id="RPC实现"><a href="#RPC实现" class="headerlink" title="RPC实现"></a>RPC实现</h4><p><strong>client</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pika</span><br><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FibonacciRpcClient</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.connection = pika.BlockingConnection(pika.ConnectionParameters(</span><br><span class="line">            host=<span class="string">&#x27;localhost&#x27;</span>))</span><br><span class="line">        self.channel = self.connection.channel()</span><br><span class="line">        result = self.channel.queue_declare(queue=<span class="string">&#x27;&#x27;</span>, exclusive=<span class="literal">True</span>)</span><br><span class="line">        self.callback_queue = result.method.queue</span><br><span class="line"></span><br><span class="line">        self.channel.basic_consume(</span><br><span class="line">            queue=self.callback_queue,</span><br><span class="line">            on_message_callback = self.on_response,  <span class="comment"># 只要一收到消息就调用on_response</span></span><br><span class="line">            auto_ack=<span class="literal">True</span>,</span><br><span class="line">        )  <span class="comment"># 收这个queue的消息</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">on_response</span>(<span class="params">self, ch, method, props, body</span>):</span>  <span class="comment"># 必须四个参数</span></span><br><span class="line">        <span class="comment"># 如果收到的ID和本机生成的相同，则返回的结果就是我想要的指令返回的结果</span></span><br><span class="line">        <span class="keyword">if</span> self.corr_id == props.correlation_id:</span><br><span class="line">            self.response = body</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">call</span>(<span class="params">self, n</span>):</span></span><br><span class="line">        self.response = <span class="literal">None</span>  <span class="comment"># 初始self.response为None</span></span><br><span class="line">        self.corr_id = <span class="built_in">str</span>(uuid.uuid4())  <span class="comment"># 随机唯一字符串</span></span><br><span class="line">        self.channel.basic_publish(</span><br><span class="line">            exchange=<span class="string">&#x27;&#x27;</span>,</span><br><span class="line">            routing_key=<span class="string">&#x27;rpc_queue&#x27;</span>,  <span class="comment"># 发消息到rpc_queue</span></span><br><span class="line">            properties=pika.BasicProperties(  <span class="comment"># 消息持久化</span></span><br><span class="line">                reply_to=self.callback_queue,  <span class="comment"># 让服务端命令结果返回到callback_queue</span></span><br><span class="line">                correlation_id=self.corr_id,  <span class="comment"># 把随机uuid同时发给服务器</span></span><br><span class="line">            ),</span><br><span class="line">            body=<span class="built_in">str</span>(n)</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">while</span> self.response <span class="keyword">is</span> <span class="literal">None</span>:  <span class="comment"># 当没有数据，就一直循环</span></span><br><span class="line">            <span class="comment"># 启动后，on_response函数接到消息，self.response 值就不为空了</span></span><br><span class="line">            self.connection.process_data_events()  <span class="comment"># 非阻塞版的start_consuming()</span></span><br><span class="line">            <span class="comment"># print(&quot;no msg……&quot;)</span></span><br><span class="line">            <span class="comment"># time.sleep(0.5)</span></span><br><span class="line">        <span class="comment"># 收到消息就调用on_response</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">int</span>(self.response)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    fibonacci_rpc = FibonacciRpcClient()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot; [x] Requesting fib(7)&quot;</span>)</span><br><span class="line">    response = fibonacci_rpc.call(<span class="number">7</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot; [.] Got %r&quot;</span> % response)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>server</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pika</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fib</span>(<span class="params">n</span>):</span></span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">elif</span> n == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> fib(n-<span class="number">1</span>) + fib(n-<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">on_request</span>(<span class="params">ch, method, props, body</span>):</span></span><br><span class="line">    n = <span class="built_in">int</span>(body)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot; [.] fib(%s)&quot;</span> % n)</span><br><span class="line">    response = fib(n)</span><br><span class="line"></span><br><span class="line">    ch.basic_publish(</span><br><span class="line">            exchange=<span class="string">&#x27;&#x27;</span>,  <span class="comment"># 把执行结果发回给客户端</span></span><br><span class="line">            routing_key=props.reply_to,  <span class="comment"># 客户端要求返回想用的queue</span></span><br><span class="line">            <span class="comment"># 返回客户端发过来的correction_id 为了让客户端验证消息一致性</span></span><br><span class="line">            properties=pika.BasicProperties(correlation_id = props.correlation_id),</span><br><span class="line">            body=<span class="built_in">str</span>(response)</span><br><span class="line">    )</span><br><span class="line">    ch.basic_ack(delivery_tag = method.delivery_tag)  <span class="comment"># 任务完成，告诉客户端</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    connection = pika.BlockingConnection(pika.ConnectionParameters(</span><br><span class="line">            host=<span class="string">&#x27;localhost&#x27;</span>))</span><br><span class="line">    channel = connection.channel()</span><br><span class="line">    channel.queue_declare(queue=<span class="string">&#x27;rpc_queue&#x27;</span>)  <span class="comment"># 声明一个rpc_queue ,</span></span><br><span class="line"></span><br><span class="line">    channel.basic_qos(prefetch_count=<span class="number">1</span>)</span><br><span class="line">    <span class="comment"># 在rpc_queue里收消息,收到消息就调用on_request</span></span><br><span class="line">    channel.basic_consume(queue=<span class="string">&#x27;rpc_queue&#x27;</span>,on_message_callback = on_request)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot; [x] Awaiting RPC requests&quot;</span>)</span><br><span class="line">    channel.start_consuming()</span><br></pre></td></tr></table></figure>
+
+<h4 id="linux安装"><a href="#linux安装" class="headerlink" title="linux安装"></a>linux安装</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.将rabbitmq安装包上传到linux系统中</span></span><br><span class="line">	erlang-<span class="number">22.0</span><span class="number">.7</span>-<span class="number">1.</span>el7.x86_64.rpm  <span class="comment">#l7表示是Centosl7,Centosl8表示Centos8</span></span><br><span class="line">	rabbitmq-server-<span class="number">3.7</span><span class="number">.18</span>-<span class="number">1.</span>el7.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.安装Erlang依赖包</span></span><br><span class="line">	rpm -ivh erlang-<span class="number">22.0</span><span class="number">.7</span>-<span class="number">1.</span>el7.x86_64.rpm</span><br><span class="line">    rpm -ivh socat-<span class="number">1.7</span><span class="number">.3</span><span class="number">.2</span>-<span class="number">2.</span>el7.x86_64.rpm</span><br><span class="line">	rpm -ivh rabbitmq-server-<span class="number">3.7</span><span class="number">.18</span>-<span class="number">1.</span>el7.noarch.rpm</span><br><span class="line"><span class="comment"># 3.安装RabbitMQ安装包(需要联网)</span></span><br><span class="line">	yum install -y rabbitmq-server-<span class="number">3.7</span><span class="number">.18</span>-<span class="number">1.</span>el7.noarch.rpm</span><br><span class="line">	注意:默认安装完成后配置文件模板在:/usr/share/doc/rabbitmq-server-<span class="number">3.7</span><span class="number">.18</span>/rabbitmq.config.example目录中,需要	</span><br><span class="line">	将配置文件复制到/etc/rabbitmq/目录中,并修改名称为rabbitmq.config</span><br><span class="line"><span class="comment"># 4.复制配置文件</span></span><br><span class="line">	cp /usr/share/doc/rabbitmq-server-<span class="number">3.7</span><span class="number">.18</span>/rabbitmq.config.example /etc/rabbitmq/rabbitmq.config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.查看配置文件位置</span></span><br><span class="line">	ls /etc/rabbitmq/rabbitmq.config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.修改配置文件(参见下图:)</span></span><br><span class="line">	vim /etc/rabbitmq/rabbitmq.config </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/09/04/RabbitMQ/image-20210905231220486.png" alt="RabbitMQ"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">将上图中配置文件中红色部分去掉`%%`,以及最后的`,`逗号 </span><br><span class="line">修改为下图:</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/09/04/RabbitMQ/image-20210905231408847.png" alt="RabbitMQ"></p>
+<p><img src="/2021/09/04/RabbitMQ/image-20210905231555985.png" alt="RabbitMQ"></p>
+<p><img src="/2021/09/04/RabbitMQ/image-20210905231852033.png" alt="RabbitMQ"></p>
+<p><img src="/2021/09/04/RabbitMQ/image-20210905232051467.png" alt="RabbitMQ"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 7.执行如下命令,启动rabbitmq中的插件管理</span></span><br><span class="line">	rabbitmq-plugins enable rabbitmq_management</span><br><span class="line">	</span><br><span class="line">	出现如下说明:</span><br><span class="line">		Enabling plugins on node rabbit@localhost:</span><br><span class="line">    rabbitmq_management</span><br><span class="line">    The following plugins have been configured:</span><br><span class="line">      rabbitmq_management</span><br><span class="line">      rabbitmq_management_agent</span><br><span class="line">      rabbitmq_web_dispatch</span><br><span class="line">    Applying plugin configuration to rabbit@localhost...</span><br><span class="line">    The following plugins have been enabled:</span><br><span class="line">      rabbitmq_management</span><br><span class="line">      rabbitmq_management_agent</span><br><span class="line">      rabbitmq_web_dispatch</span><br><span class="line"></span><br><span class="line">    <span class="built_in">set</span> <span class="number">3</span> plugins.</span><br><span class="line">    Offline change; changes will take effect at broker restart.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 8.启动RabbitMQ的服务</span></span><br><span class="line">	systemctl start rabbitmq-server</span><br><span class="line">	systemctl restart rabbitmq-server</span><br><span class="line">	systemctl stop rabbitmq-server</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line"><span class="comment"># 9.查看服务状态(见下图:)</span></span><br><span class="line">	systemctl status rabbitmq-server</span><br><span class="line">  ● rabbitmq-server.service - RabbitMQ broker</span><br><span class="line">     Loaded: loaded (/usr/lib/systemd/system/rabbitmq-server.service; disabled; vendor preset: disabled)</span><br><span class="line">     Active: active (running) since 三 <span class="number">2019</span>-09-<span class="number">25</span> <span class="number">22</span>:<span class="number">26</span>:<span class="number">35</span> CST; 7s ago</span><br><span class="line">   Main PID: <span class="number">2904</span> (beam.smp)</span><br><span class="line">     Status: <span class="string">&quot;Initialized&quot;</span></span><br><span class="line">     CGroup: /system.<span class="built_in">slice</span>/rabbitmq-server.service</span><br><span class="line">             ├─<span class="number">2904</span> /usr/lib64/erlang/erts-<span class="number">10.4</span><span class="number">.4</span>/<span class="built_in">bin</span>/beam.smp -W w -A <span class="number">64</span> -MBas ageffcbf -MHas ageffcbf -</span><br><span class="line">             MBlmbcs...</span><br><span class="line">             ├─<span class="number">3220</span> erl_child_setup <span class="number">32768</span></span><br><span class="line">             ├─<span class="number">3243</span> inet_gethost <span class="number">4</span></span><br><span class="line">             └─<span class="number">3244</span> inet_gethost <span class="number">4</span></span><br><span class="line">      .........</span><br><span class="line"><span class="comment"># 10.关闭防火墙</span></span><br><span class="line">systemctl stop firewalld</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="rabbitmq命令相关"><a href="#rabbitmq命令相关" class="headerlink" title="rabbitmq命令相关"></a>rabbitmq命令相关</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.服务启动相关</span></span><br><span class="line">	systemctl start|restart|stop|status rabbitmq-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.管理命令行  用来在不使用web管理界面情况下命令操作RabbitMQ</span></span><br><span class="line">	rabbitmqctl  <span class="built_in">help</span>  可以查看更多命令</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.插件管理命令行</span></span><br><span class="line">	rabbitmq-plugins enable|<span class="built_in">list</span>|disable </span><br></pre></td></tr></table></figure>
+
+<h4 id="设置用户名和权限"><a href="#设置用户名和权限" class="headerlink" title="设置用户名和权限"></a>设置用户名和权限</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">rabbitmqctl add_user xxx <span class="number">123</span></span><br><span class="line"><span class="comment"># 设置用户为administrator角色</span></span><br><span class="line">rabbitmqctl set_user_tags xxx administrator</span><br><span class="line"><span class="comment"># 设置权限</span></span><br><span class="line">rabbitmqctl set_permissions <span class="literal">-p</span> <span class="string">&quot;/&quot;</span> xxx <span class="string">&quot;.*&quot;</span> <span class="string">&quot;.*&quot;</span> <span class="string">&quot;.*&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 然后重启rabbiMQ服务</span></span><br><span class="line">systemctl reatart rabbitmq<span class="literal">-server</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 然后可以使用刚才的用户远程连接rabbitmq server了</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="celery使用rabbitmq作为中间件"><a href="#celery使用rabbitmq作为中间件" class="headerlink" title="celery使用rabbitmq作为中间件"></a>celery使用rabbitmq作为中间件</h4><ul>
+<li><p><img src="/2021/09/04/RabbitMQ/image-20211112125648863.png" alt="RabbitMQ"></p>
+</li>
+<li><p>新增mq用户和虚拟主机</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@FCY-SRV02 ~]<span class="comment"># rabbitmqctl add_user foda foda@2021.</span></span><br><span class="line">Adding user <span class="string">&quot;foda&quot;</span> ...</span><br><span class="line">[root@FCY-SRV02 ~]<span class="comment"># rabbitmqctl add_vhost myvhost</span></span><br><span class="line">Adding vhost <span class="string">&quot;myvhost&quot;</span> ...</span><br><span class="line">[root@FCY-SRV02 ~]<span class="comment"># rabbitmqctl set_user_tags foda mytag</span></span><br><span class="line">Setting tags <span class="keyword">for</span> user <span class="string">&quot;foda&quot;</span> to [mytag] ...</span><br><span class="line">[root@FCY-SRV02 ~]<span class="comment"># rabbitmqctl set_permissions -p myvhost foda &quot;.*&quot; &quot;.*&quot; &quot;.*&quot;</span></span><br><span class="line">Setting permissions <span class="keyword">for</span> user <span class="string">&quot;foda&quot;</span> <span class="keyword">in</span> vhost <span class="string">&quot;myvhost&quot;</span> ...</span><br><span class="line">[root@FCY-SRV02 ~]<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>celery.py</li>
+<li>启动命令: celery worker -A celery_task -l info -P eventlet</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">os.environ.setdefault(<span class="string">&quot;DJANGO_SETTINGS_MODULE&quot;</span>, <span class="string">&quot;AlgorithmServer.settings&quot;</span>)</span><br><span class="line">broker = <span class="string">&#x27;amqp://foda:foda@2021.@10.21.6.12:5672/myvhost&#x27;</span></span><br><span class="line">backend = <span class="string">&#x27;amqp://foda:foda@2021.@10.21.6.12:5672/myvhost&#x27;</span></span><br><span class="line">app = Celery(broker=broker, backend=backend,</span><br><span class="line">             include=[<span class="string">&#x27;celery_task.order_task&#x27;</span>, <span class="string">&#x27;celery_task.user_task&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 时区</span></span><br><span class="line">app.conf.timezone = <span class="string">&#x27;Asia/Shanghai&#x27;</span></span><br><span class="line"><span class="comment"># 是否使用UTC</span></span><br><span class="line">app.conf.enable_utc = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 任务的定时配置</span></span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> timedelta</span><br><span class="line"><span class="keyword">from</span> celery.schedules <span class="keyword">import</span> crontab</span><br><span class="line"></span><br><span class="line">app.conf.beat_schedule = &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># &#x27;update_banner&#x27;: &#123;</span></span><br><span class="line">    <span class="comment">#     &#x27;task&#x27;: &#x27;&#x27;,</span></span><br><span class="line">    <span class="comment">#     &#x27;schedule&#x27;: timedelta(seconds=10),</span></span><br><span class="line">    <span class="comment">#     # &#x27;schedule&#x27;: crontab(hour=8, day_of_week=1),  # 每周一早八点</span></span><br><span class="line">    <span class="comment">#     # &#x27;schedule&#x27;: crontab(hour=8, day_of_month=1),  # 每月一号早八点</span></span><br><span class="line">    <span class="comment">#     &#x27;args&#x27;: (),</span></span><br><span class="line">    <span class="comment"># &#125;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>django中使用celery异步任务</li>
+<li>views.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery_task <span class="keyword">import</span> user_task</span><br><span class="line"><span class="keyword">from</span> celery_task.celery <span class="keyword">import</span> app</span><br><span class="line"><span class="keyword">from</span> celery.result <span class="keyword">import</span> AsyncResult    </span><br><span class="line">    </span><br><span class="line"><span class="meta">    @action(<span class="params">methods=[<span class="string">&#x27;GET&#x27;</span>], detail=<span class="literal">False</span></span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">test_celery</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        <span class="built_in">id</span> = request.GET.get(<span class="string">&#x27;id&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">id</span>:</span><br><span class="line">            res = AsyncResult(<span class="built_in">id</span>=<span class="built_in">id</span>, app=app)</span><br><span class="line">            <span class="keyword">if</span> res.successful():</span><br><span class="line">                result = res.get()</span><br><span class="line">                <span class="built_in">print</span>(result)</span><br><span class="line">                <span class="keyword">return</span> APIResponse(code=<span class="number">1</span>, msg=<span class="string">&#x27;执行完成&#x27;</span>, result=<span class="string">&#x27;&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(result))</span><br><span class="line">            <span class="keyword">elif</span> res.failed():</span><br><span class="line">                <span class="keyword">return</span> HttpResponse(<span class="string">&#x27;执行失败&#x27;</span>)</span><br><span class="line">            <span class="keyword">elif</span> res.status == <span class="string">&#x27;PENDING&#x27;</span>:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&#x27;任务等待中被执行&#x27;</span>)</span><br><span class="line">                <span class="keyword">return</span> HttpResponse(<span class="string">&#x27;PENDING&#x27;</span>)</span><br><span class="line">            <span class="keyword">elif</span> res.status == <span class="string">&#x27;RETRY&#x27;</span>:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&#x27;任务异常后正在重试&#x27;</span>)</span><br><span class="line">                <span class="keyword">return</span> HttpResponse(<span class="string">&#x27;RETRY&#x27;</span>)</span><br><span class="line">            <span class="keyword">elif</span> res.status == <span class="string">&#x27;STARTED&#x27;</span>:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&#x27;任务已经开始被执行&#x27;</span>)</span><br><span class="line">                <span class="keyword">return</span> HttpResponse(<span class="string">&#x27;STARTED&#x27;</span>)</span><br><span class="line"></span><br><span class="line">        url = <span class="string">&#x27;http://127.0.0.1:8080/product/getPythonData&#x27;</span></span><br><span class="line">        res = user_task.test.delay(url)</span><br><span class="line">        <span class="keyword">return</span> APIResponse(code=<span class="number">0</span>, result=<span class="string">&#x27;任务号&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(res))</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>user_task.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span>(<span class="params">url</span>):</span></span><br><span class="line">    response = requests.get(url=url)</span><br><span class="line">    <span class="keyword">if</span> response.status_code == <span class="number">200</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;success&#x27;</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;error&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="集群搭建"><a href="#集群搭建" class="headerlink" title="集群搭建"></a>集群搭建</h4><ul>
+<li>核心解决问题:  当集群中某一时刻master节点宕机,可以对Queue中信息,进行备份</li>
+</ul>
+<p><img src="/2021/09/04/RabbitMQ/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3VuaXF1ZV9wZXJmZWN0,size_16,color_FFFFFF,t_70" alt="RabbitMQ"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 0.集群规划</span></span><br><span class="line">	node1: <span class="number">10.15</span><span class="number">.0</span><span class="number">.3</span>  mq1  master 主节点</span><br><span class="line">	node2: <span class="number">10.15</span><span class="number">.0</span><span class="number">.4</span>  mq2  repl1  副本节点</span><br><span class="line">	node3: <span class="number">10.15</span><span class="number">.0</span><span class="number">.5</span>  mq3  repl2  副本节点</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.克隆三台机器主机名和ip映射</span></span><br><span class="line">	vim /etc/hosts加入:</span><br><span class="line">        </span><br><span class="line"><span class="number">10.21</span><span class="number">.6</span><span class="number">.11</span>      FCY-SRV01.local FCY-SRV01</span><br><span class="line"><span class="number">10.21</span><span class="number">.6</span><span class="number">.12</span>      FCY-SRV02.local FCY-SRV02</span><br><span class="line"><span class="number">10.21</span><span class="number">.6</span><span class="number">.13</span>      FCY-SRV03.local FCY-SRV03</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.三个机器安装rabbitmq,并同步cookie文件,在node1上执行:</span></span><br><span class="line">	scp /var/lib/rabbitmq/.erlang.cookie root@FCY-SRV02:/var/lib/rabbitmq/</span><br><span class="line">	scp /var/lib/rabbitmq/.erlang.cookie root@FCY-SRV03:/var/lib/rabbitmq/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.查看cookie是否一致:</span></span><br><span class="line">	node1: cat /var/lib/rabbitmq/.erlang.cookie </span><br><span class="line">	node2: cat /var/lib/rabbitmq/.erlang.cookie </span><br><span class="line">	node3: cat /var/lib/rabbitmq/.erlang.cookie </span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.后台启动rabbitmq所有节点执行如下命令,启动成功访问管理界面:</span></span><br><span class="line">	rabbitmq-server -detached </span><br><span class="line"></span><br><span class="line"><span class="comment"># 5.在node2和node3执行加入集群命令:</span></span><br><span class="line">	<span class="number">1.</span>关闭       rabbitmqctl stop_app</span><br><span class="line">	<span class="number">2.</span>加入集群    rabbitmqctl join_cluster rabbit@FCY-SRV01</span><br><span class="line">	<span class="number">3.</span>启动服务    rabbitmqctl start_app</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6.查看集群状态,任意节点执行:</span></span><br><span class="line">	rabbitmqctl cluster_status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7.如果出现如下显示,集群搭建成功:</span></span><br><span class="line">[root@FCY-SRV01 rabbitmq]<span class="comment"># rabbitmqctl cluster_status</span></span><br><span class="line">Cluster status of node rabbit@FCY-SRV01 ...</span><br><span class="line">[&#123;nodes,[&#123;disc,[<span class="string">&#x27;rabbit@FCY-SRV01&#x27;</span>,<span class="string">&#x27;rabbit@FCY-SRV02&#x27;</span>,<span class="string">&#x27;rabbit@FCY-SRV03&#x27;</span>]&#125;]&#125;,</span><br><span class="line"> &#123;running_nodes,[<span class="string">&#x27;rabbit@FCY-SRV03&#x27;</span>,<span class="string">&#x27;rabbit@FCY-SRV02&#x27;</span>,<span class="string">&#x27;rabbit@FCY-SRV01&#x27;</span>]&#125;,</span><br><span class="line"> &#123;cluster_name,&lt;&lt;<span class="string">&quot;rabbit@FCY-SRV01.local&quot;</span>&gt;&gt;&#125;,</span><br><span class="line"> &#123;partitions,[]&#125;,</span><br><span class="line"> &#123;alarms,[&#123;<span class="string">&#x27;rabbit@FCY-SRV03&#x27;</span>,[]&#125;,</span><br><span class="line">          &#123;<span class="string">&#x27;rabbit@FCY-SRV02&#x27;</span>,[]&#125;,</span><br><span class="line">          &#123;<span class="string">&#x27;rabbit@FCY-SRV01&#x27;</span>,[]&#125;]&#125;]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 8.登录管理界面,展示如下状态:</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/09/04/RabbitMQ/image-20211106011125448.png" alt="RabbitMQ"></p>
+<h4 id="镜像集群"><a href="#镜像集群" class="headerlink" title="镜像集群"></a>镜像集群</h4><p><img src="/2021/09/04/RabbitMQ/20201030230122209.png" alt="RabbitMQ"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">This guide covers mirroring (queue contents replication) </span><br><span class="line">of classic queues  --摘自官网</span><br><span class="line"></span><br><span class="line">By default, contents of a queue within a RabbitMQ </span><br><span class="line">cluster are located on a single node (the node on </span><br><span class="line">which the queue was declared). This <span class="keyword">is</span> <span class="keyword">in</span> contrast </span><br><span class="line">to exchanges <span class="keyword">and</span> bindings, which can always be</span><br><span class="line">considered to be on <span class="built_in">all</span> nodes. Queues can </span><br><span class="line">optionally be made *mirrored* across multiple nodes. </span><br><span class="line">--摘自官网</span><br><span class="line">镜像队列机制就是将队列在三个节点之间设置主从关系，</span><br><span class="line">消息会在三个节点之间进行自动同步，且如果其中一个</span><br><span class="line">节点不可用，并不会导致消息丢失或服务不可用的情况，</span><br><span class="line">提升MQ集群的整体高可用性。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>搭建</strong></p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 0.策略说明</span></span><br><span class="line">rabbitmqctl set_policy [-<span class="type">p</span> &lt;<span class="type">vhost</span>&gt;] [--<span class="type">priority</span> &lt;<span class="type">priority</span>&gt;] [--<span class="type">apply</span>-<span class="type">to</span> &lt;<span class="type">apply</span>-<span class="type">to</span>&gt;] &lt;name&gt; &lt;pattern&gt;  &lt;definition&gt;</span><br><span class="line"><span class="literal">-p</span> Vhost： 可选参数，针对指定vhost下的queue进行设置</span><br><span class="line">Name:     policy的名称</span><br><span class="line">Pattern: queue的匹配模式(正则表达式)</span><br><span class="line">Definition：镜像定义，包括三个部分ha<span class="literal">-mode</span>, ha<span class="literal">-params</span>, ha<span class="literal">-sync</span><span class="literal">-mode</span></span><br><span class="line">ha<span class="literal">-mode</span>:指明镜像队列的模式，有效值为 all/exactly/nodes</span><br><span class="line">all：表示在集群中所有的节点上进行镜像</span><br><span class="line">exactly：表示在指定个数的节点上进行镜像，节点的个数由ha<span class="literal">-params</span>指定</span><br><span class="line">nodes：表示在指定的节点上进行镜像，节点名称通过ha<span class="literal">-params</span>指定</span><br><span class="line">ha<span class="literal">-params</span>：ha<span class="literal">-mode</span>模式需要用到的参数</span><br><span class="line">ha<span class="literal">-sync</span><span class="literal">-mode</span>：进行队列中消息的同步方式，有效值为automatic和manual</span><br><span class="line">              priority：可选参数，policy的优先级</span><br><span class="line">              </span><br><span class="line">               </span><br><span class="line"><span class="comment"># 1.查看当前策略</span></span><br><span class="line">rabbitmqctl list_policies</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.添加策略</span></span><br><span class="line">rabbitmqctl set_policy ha<span class="literal">-all</span> <span class="string">&#x27;^mongodb&#x27;</span> <span class="string">&#x27;&#123;&quot;ha-mode&quot;:&quot;all&quot;,&quot;ha-sync-mode&quot;:&quot;automatic&quot;&#125;&#x27;</span> </span><br><span class="line">说明:策略正则表达式为 “^” 表示所有匹配所有队列名称  ^hello:匹配hello开头队列</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.删除策略</span></span><br><span class="line">rabbitmqctl clear_policy ha<span class="literal">-all</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4.测试集群</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/09/04/RabbitMQ/image-20211106012409207.png" alt="RabbitMQ"></p>
+
+    </div>
+
+    
+    
+    
+	  
+	  
+		   <div>
+			 <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:20px;">-------------End-------------</div>
+    
+</div>
+		   </div>
+	   
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/RabbitMQ/" rel="tag"># RabbitMQ</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/08/30/nacos/" rel="prev" title="nacos">
+      <i class="fa fa-chevron-left"></i> nacos
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/09/29/django+uWSGI+nginx%E9%83%A8%E7%BD%B2/" rel="next" title="django+uWSGI+nginx部署">
+      django+uWSGI+nginx部署 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AE%E8%AF%A2%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">轮询模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E8%BD%AE%E8%AF%A2"><span class="nav-number">4.</span> <span class="nav-text">模拟轮询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">5.</span> <span class="nav-text">消息持久化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ack%E6%B6%88%E6%81%AF%E7%A1%AE%E8%AE%A4%E6%9C%BA%E5%88%B6"><span class="nav-number">6.</span> <span class="nav-text">ack消息确认机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%BF%E6%92%AD%E6%A8%A1%E5%BC%8F"><span class="nav-number">7.</span> <span class="nav-text">广播模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RPC%E5%AE%9E%E7%8E%B0"><span class="nav-number">8.</span> <span class="nav-text">RPC实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#linux%E5%AE%89%E8%A3%85"><span class="nav-number">9.</span> <span class="nav-text">linux安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rabbitmq%E5%91%BD%E4%BB%A4%E7%9B%B8%E5%85%B3"><span class="nav-number">10.</span> <span class="nav-text">rabbitmq命令相关</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7%E5%90%8D%E5%92%8C%E6%9D%83%E9%99%90"><span class="nav-number">11.</span> <span class="nav-text">设置用户名和权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#celery%E4%BD%BF%E7%94%A8rabbitmq%E4%BD%9C%E4%B8%BA%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">12.</span> <span class="nav-text">celery使用rabbitmq作为中间件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA"><span class="nav-number">13.</span> <span class="nav-text">集群搭建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E9%9B%86%E7%BE%A4"><span class="nav-number">14.</span> <span class="nav-text">镜像集群</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Admin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Admin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-07 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Admin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共151.4k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

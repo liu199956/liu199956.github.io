@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="rtsp后台视频流搭建  1234567wget  http:&#x2F;&#x2F;www.live555.com&#x2F;liveMedia&#x2F;public&#x2F;live555-latest.tar.gztar xzf live555-latest.tar.gzcd live.&#x2F;genMakefiles linux-64bit    #注意后面这个参数是根据当前文件夹下config.&lt;后缀&gt;获取得到的makecd">
+<meta property="og:type" content="article">
+<meta property="og:title" content="opencv">
+<meta property="og:url" content="http://example.com/2021/11/23/opencv/index.html">
+<meta property="og:site_name" content="Admin">
+<meta property="og:description" content="rtsp后台视频流搭建  1234567wget  http:&#x2F;&#x2F;www.live555.com&#x2F;liveMedia&#x2F;public&#x2F;live555-latest.tar.gztar xzf live555-latest.tar.gzcd live.&#x2F;genMakefiles linux-64bit    #注意后面这个参数是根据当前文件夹下config.&lt;后缀&gt;获取得到的makecd">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211123151226557.png">
+<meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20220309175859987.png">
+<meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211123153836430.png">
+<meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211123154630135.png">
+<meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211123154924271.png">
+<meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211123155436340.png">
+<meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211123155653136.png">
+<meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211123161450930.png">
+<meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211130174239356.png">
+<meta property="og:image" content="http://example.com/2021/11/23/opencv/image-20211223141710233.png">
+<meta property="article:published_time" content="2021-11-23T07:00:05.000Z">
+<meta property="article:modified_time" content="2022-04-29T09:40:21.786Z">
+<meta property="article:author" content="Admin">
+<meta property="article:tag" content="opencv">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/11/23/opencv/image-20211123151226557.png">
+
+<link rel="canonical" href="http://example.com/2021/11/23/opencv/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>opencv | Admin</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Admin" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Admin</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/23/opencv/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Admin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Admin">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          opencv
+        </h1>
+
+        <div class="post-meta">
+		<!-- 设置置顶标志 -->
+			
+			  <i class="fa fa-thumb-tack"></i>
+			  <font color=7D26CD>置顶</font>
+			  <span class="post-meta-divider">|</span>
+			
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-11-23 15:00:05" itemprop="dateCreated datePublished" datetime="2021-11-23T15:00:05+08:00">2021-11-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-29 17:40:21" itemprop="dateModified" datetime="2022-04-29T17:40:21+08:00">2022-04-29</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="rtsp后台视频流搭建"><a href="#rtsp后台视频流搭建" class="headerlink" title="rtsp后台视频流搭建"></a>rtsp后台视频流搭建</h4><img src="/2021/11/23/opencv/image-20211123151226557.png" alt="opencv" style="zoom:150%;">
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wget  http://www.live555.com/liveMedia/public/live555-latest.tar.gz</span><br><span class="line">tar xzf live555-latest.tar.gz</span><br><span class="line">cd live</span><br><span class="line">./genMakefiles linux-64bit    #注意后面这个参数是根据当前文件夹下config.&lt;后缀&gt;获取得到的</span><br><span class="line">make</span><br><span class="line">cd mediaServer</span><br><span class="line">./live555MediaServer   # 启动rtsp服务</span><br></pre></td></tr></table></figure>
+
+<h4 id="ffmpeg"><a href="#ffmpeg" class="headerlink" title="ffmpeg"></a>ffmpeg</h4><ul>
+<li><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/67878761">https://zhuanlan.zhihu.com/p/67878761</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43474959/article/details/105366800">https://blog.csdn.net/qq_43474959/article/details/105366800</a></p>
+</li>
+<li><p>FFmpeg是一套可以用来记录、转换数字音频、视频，并能将其转化为流的开源计算机程序</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xz -d ffmpeg-git-amd64-static.tar.xz</span><br><span class="line">tar -xvf ffmpeg-git-amd64-static.tar</span><br><span class="line">cd ffmpeg-git-<span class="number">20211108</span>-amd64-static/</span><br><span class="line">./ffmpeg</span><br><span class="line"><span class="comment"># 建立软连接</span></span><br><span class="line">ln -s /usr/local/ffmpeg/ffmpeg-git-<span class="number">20211108</span>-amd64-static/ffmpeg /usr/<span class="built_in">bin</span>/ffmpeg</span><br><span class="line">ln -s /usr/local/ffmpeg/ffmpeg-git-<span class="number">20211108</span>-amd64-static/ffprobe /usr/<span class="built_in">bin</span>/ffprobe</span><br><span class="line"><span class="comment"># 启动</span></span><br><span class="line">ffmpeg</span><br></pre></td></tr></table></figure>
+
+<p><strong>常用参数</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">主要参数：</span><br><span class="line">i 设定输入流</span><br><span class="line">f 设定输出格式</span><br><span class="line">ss 开始时间</span><br><span class="line">t  持续时间</span><br><span class="line">视频参数：</span><br><span class="line">b 设定视频流量，默认为200Kbit/s-r 设定帧速率，默认为<span class="number">25</span></span><br><span class="line">s 设定画面的宽与高-aspect 设定画面的比例</span><br><span class="line">vn 不处理视频-vcodec 设定视频编解码器，未设定时则使用与输入流相同的编解码器</span><br><span class="line">音频参数：</span><br><span class="line">ar 设定采样率</span><br><span class="line">ac 设定声音的Channel数</span><br><span class="line">acodec 设定声音编解码器，未设定时则使用与输入流相同的编解码器an 不处理音频</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>1.分离视频音频流</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input_file -vcodec copy -an output_file_video　　//分离视频流</span><br><span class="line">ffmpeg -i input_file -acodec copy -vn output_file_audio　　//分离音频流</span><br></pre></td></tr></table></figure>
+
+<p>2.<strong>视频图片剪切</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg –i test.avi –r 1 –f image2 image-%3d.jpeg //提取图片</span><br><span class="line">ffmpeg -ss 0:1:30 -t 0:0:20 -i input.avi -vcodec copy -acodec copy output.avi //剪切视频</span><br></pre></td></tr></table></figure>
+
+<p>3.视频流推流(rtmp)</p>
+<ul>
+<li>拉取摄像机RTSP流，推送给RTMP服务器 -vcodec copy -acodec copy (限于摄像机提供的就为H.264+AAC的码流)</li>
+<li>若不是则-vcodec copy<code>改为</code>-vcodec libx264<code>，</code>-acodec copy<code>改为</code>-acodec aac</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i rtsp://<span class="number">10.21</span><span class="number">.6</span><span class="number">.11</span>/video/<span class="number">2.</span>mkv  -vcodec libx264 -preset:v ultrafast -tune:v zerolatency -acodec copy -f flv  rtmp://<span class="number">10.21</span><span class="number">.6</span><span class="number">.12</span>/live/livestream</span><br></pre></td></tr></table></figure>
+
+<p>4.视频流推流(rtsp)</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg <span class="literal">-re</span> <span class="literal">-stream_loop</span> <span class="literal">-1</span> <span class="literal">-i</span> <span class="number">2</span>.mp4 <span class="literal">-c</span> <span class="built_in">copy</span> <span class="operator">-f</span> rtsp rtsp://<span class="number">10.21</span>.<span class="number">6.11</span>/video</span><br></pre></td></tr></table></figure>
+
+<h4 id="srs"><a href="#srs" class="headerlink" title="srs"></a>srs</h4><ul>
+<li>(Simple RTMP Server)  是国人写的一款非常优秀的开源流媒体服务器软件，可用于直播/录播/视频客服等多种场景，其定位是运营级的互联网直播服务器集群</li>
+</ul>
+<p>docker启动</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">eip=<span class="variable">$</span>(ifconfig eth0|grep <span class="string">&#x27;inet &#x27;</span>|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> [[ ! -<span class="type">z</span> <span class="variable">$eip</span> ]]; then</span><br><span class="line">  docker run <span class="literal">-d</span> -<span class="literal">-rm</span> -<span class="literal">-env</span> CANDIDATE=<span class="variable">$</span>(ifconfig eth0|grep <span class="string">&#x27;inet &#x27;</span>|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>) \</span><br><span class="line">      <span class="literal">-p</span> <span class="number">1935</span>:<span class="number">1935</span> <span class="literal">-p</span> <span class="number">8080</span>:<span class="number">8080</span> <span class="literal">-p</span> <span class="number">1985</span>:<span class="number">1985</span> <span class="literal">-p</span> <span class="number">8000</span>:<span class="number">8000</span>/udp \</span><br><span class="line">      registry.cn<span class="literal">-hangzhou</span>.aliyuncs.com/ossrs/srs:v4.<span class="number">0.76</span> \</span><br><span class="line">      objs/srs <span class="literal">-c</span> conf/rtc.conf</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<p>ffmpeg推流</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://10.21.6.12:8080/live/livestream.flv">http://10.21.6.12:8080/live/livestream.flv</a></li>
+<li>webrtc://10.21.6.12/live/livestream</li>
+<li>rtmp://10.21.6.12/live/livestream</li>
+<li><img src="/2021/11/23/opencv/image-20220309175859987.png" alt="opencv"></li>
+</ul>
+<p><code>将rtsp视频流推流到srs</code></p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg <span class="literal">-re</span> <span class="literal">-i</span> rtsp://<span class="number">10.21</span>.<span class="number">6.11</span>/video/<span class="number">2</span>.mkv <span class="literal">-vcodec</span> libx264 <span class="literal">-acodec</span> aac <span class="operator">-f</span> flv   rtmp://<span class="number">10.21</span>.<span class="number">6.12</span>/live/livestream</span><br></pre></td></tr></table></figure>
+
+<p><code>循环将本地文件推流到srs</code></p>
+<ul>
+<li>nohup不挂断的运行，并没有后台运行的功能，就是指，用nohup运行命令可以使命令永久的执行下去</li>
+<li>&amp; 后台运行</li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vi push.sh</span><br><span class="line">chmod +x push.sh</span><br><span class="line"></span><br><span class="line">nohup ffmpeg <span class="literal">-threads</span> <span class="number">2</span> <span class="literal">-re</span> <span class="literal">-fflags</span> +genpts <span class="literal">-stream_loop</span> <span class="literal">-1</span>  <span class="literal">-i</span> ./input.mp4  <span class="literal">-vcodec</span> libx264 <span class="literal">-preset</span>:v ultrafast <span class="literal">-tune</span>:v zerolatency <span class="literal">-acodec</span> <span class="built_in">copy</span> <span class="operator">-f</span>  flv <span class="literal">-y</span>  rtmp://<span class="number">10.21</span>.<span class="number">6.12</span>/live/input &amp;</span><br><span class="line"></span><br><span class="line">nohup ffmpeg <span class="literal">-threads</span> <span class="number">2</span> <span class="literal">-re</span> <span class="literal">-fflags</span> +genpts <span class="literal">-stream_loop</span> <span class="literal">-1</span>  <span class="literal">-i</span> ./output.mp4  <span class="literal">-vcodec</span> libx264 <span class="literal">-preset</span>:v ultrafast <span class="literal">-tune</span>:v zerolatency <span class="literal">-acodec</span> <span class="built_in">copy</span> <span class="operator">-f</span>  flv <span class="literal">-y</span>  rtmp://<span class="number">10.21</span>.<span class="number">6.12</span>/live/output &amp;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>批量杀包含ffmpeg进程</code></p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ps</span> <span class="literal">-ef</span> | grep ffmpeg | grep <span class="literal">-v</span> grep | cut <span class="literal">-c</span> <span class="number">9</span><span class="literal">-15</span> | xargs <span class="built_in">kill</span> <span class="literal">-9</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="nginx-rtmp搭建视频点播"><a href="#nginx-rtmp搭建视频点播" class="headerlink" title="nginx+rtmp搭建视频点播"></a>nginx+rtmp搭建视频点播</h4><ul>
+<li>已下载nginx</li>
+<li>下载nginx-rtmp-module</li>
+<li><img src="/2021/11/23/opencv/image-20211123153836430.png" alt="opencv"></li>
+<li>make &amp;&amp; make install</li>
+<li>nginx.conf视频点播服务器配置</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">rtmp &#123;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line"></span><br><span class="line">        listen <span class="number">1935</span>;  <span class="comment">#监听的端口</span></span><br><span class="line"></span><br><span class="line">        chunk_size <span class="number">4000</span>;</span><br><span class="line"></span><br><span class="line">        application hls &#123;  <span class="comment">#rtmp推流请求路径</span></span><br><span class="line">            live on;</span><br><span class="line">            hls on;</span><br><span class="line">            hls_path /usr/local/nginx/html/hls;</span><br><span class="line">            hls_fragment 1s;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    ....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ffmpeg推本地摄像头录像到rtmp服务后台"><a href="#ffmpeg推本地摄像头录像到rtmp服务后台" class="headerlink" title="ffmpeg推本地摄像头录像到rtmp服务后台"></a>ffmpeg推本地摄像头录像到rtmp服务后台</h4><p><img src="/2021/11/23/opencv/image-20211123154630135.png" alt="opencv"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.查看摄像头和麦克风信息</span><br><span class="line">ffmpeg -list_devices true -f dshow -i dummy</span><br><span class="line">2.摄像头推流</span><br><span class="line">ffmpeg -f dshow -i video=&quot;HD Camera&quot; -vcodec libx264 -preset:v ultrafast -tune:v zerolatency -f flv rtmp://192.168.17.6:1935/hls/test.mp4</span><br></pre></td></tr></table></figure>
+
+<h4 id="opencv截取rtmp视频流存放mongodb"><a href="#opencv截取rtmp视频流存放mongodb" class="headerlink" title="opencv截取rtmp视频流存放mongodb"></a>opencv截取rtmp视频流存放mongodb</h4><ul>
+<li>django+celery</li>
+<li><img src="/2021/11/23/opencv/image-20211123154924271.png" alt="opencv"></li>
+<li>views.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@action(<span class="params">methods=[<span class="string">&#x27;POST&#x27;</span>], detail=<span class="literal">False</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getVideoStream</span>(<span class="params">self, request, *args, **kwargs</span>):</span></span><br><span class="line">    video_path = request.data.get(<span class="string">&quot;video_path&quot;</span>)</span><br><span class="line">    filename = request.data.get(<span class="string">&quot;filename&quot;</span>)</span><br><span class="line">    end_time = request.data.get(<span class="string">&quot;end_time&quot;</span>)</span><br><span class="line">    filepath = sys.path[<span class="number">0</span>] + <span class="string">&#x27;/model/video/&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(filepath):</span><br><span class="line">        os.mkdir(filepath)</span><br><span class="line">    uuid_str = <span class="built_in">str</span>(uuid.uuid4())</span><br><span class="line">    name = filename + <span class="string">&quot;_&quot;</span> + uuid_str + <span class="string">&quot;.avi&quot;</span> </span><br><span class="line">    path = filepath + name</span><br><span class="line">    <span class="keyword">if</span> video_path <span class="keyword">and</span> filename <span class="keyword">and</span> end_time:</span><br><span class="line">        result = tasks.detect.delay(video_path, end_time, path)</span><br><span class="line">        <span class="keyword">return</span> redirect(<span class="string">&quot;/api/service/result/?id=&#123;&#125;&quot;</span>.<span class="built_in">format</span>(result))</span><br><span class="line">    <span class="keyword">return</span> APIResponse(code=<span class="number">1</span>, msg=<span class="string">&quot;缺少参数&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>result接口</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@action(<span class="params">methods=[<span class="string">&#x27;GET&#x27;</span>], detail=<span class="literal">False</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">result</span>(<span class="params">self, request, *args, **kwargs</span>):</span></span><br><span class="line">    <span class="built_in">id</span> = request.GET.get(<span class="string">&#x27;id&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">id</span>:</span><br><span class="line">        res = AsyncResult(<span class="built_in">id</span>=<span class="built_in">id</span>, app=app)</span><br><span class="line">        <span class="keyword">if</span> res.successful():</span><br><span class="line">            result = res.result</span><br><span class="line">            <span class="keyword">return</span> APIResponse(code=<span class="number">0</span>, msg=<span class="string">&#x27;执行完成&#x27;</span>, result=<span class="string">&#x27;&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(result))</span><br><span class="line">        <span class="keyword">elif</span> res.status == <span class="string">&#x27;STARTED&#x27;</span>:</span><br><span class="line">            result = res.result</span><br><span class="line">            <span class="keyword">return</span> APIResponse(code=<span class="number">2</span>, msg=<span class="string">&#x27;任务已经开始被执行&#x27;</span>, result=<span class="string">&#x27;&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(result))</span><br><span class="line">        <span class="keyword">elif</span> res.status == <span class="string">&#x27;PENDING&#x27;</span>:</span><br><span class="line">            result = res.result</span><br><span class="line">            <span class="keyword">return</span> APIResponse(code=<span class="number">3</span>, msg=<span class="string">&#x27;任务等待被执行&#x27;</span>, result=<span class="string">&#x27;&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(result))</span><br><span class="line">        <span class="keyword">elif</span> res.failed():</span><br><span class="line">            result = res.result</span><br><span class="line">            <span class="keyword">return</span> APIResponse(code=<span class="number">4</span>, msg=<span class="string">&#x27;执行失败&#x27;</span>, result=<span class="string">&#x27;&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(result))</span><br><span class="line">        <span class="keyword">elif</span> res.status == <span class="string">&#x27;RETRY&#x27;</span>:</span><br><span class="line">            result = res.result</span><br><span class="line">            <span class="keyword">return</span> APIResponse(code=<span class="number">5</span>, msg=<span class="string">&#x27;任务异常后正在重试&#x27;</span>, result=<span class="string">&#x27;&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(result))</span><br><span class="line">    <span class="keyword">return</span> APIResponse(code=<span class="number">1</span>, msg=<span class="string">&#x27;缺少参数&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>celery.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">os.environ.setdefault(<span class="string">&quot;DJANGO_SETTINGS_MODULE&quot;</span>, <span class="string">&quot;AlgorithmServer.settings&quot;</span>)</span><br><span class="line"><span class="comment"># broker = &#x27;amqp://foda:foda@2021.@10.21.6.12:5672/myvhost&#x27;</span></span><br><span class="line"><span class="comment"># backend = &#x27;amqp://foda:foda@2021.@10.21.6.12:5672/myvhost&#x27;</span></span><br><span class="line">broker = <span class="string">&#x27;redis://127.0.0.1:6379/1&#x27;</span></span><br><span class="line">backend = <span class="string">&#x27;redis://127.0.0.1:6379/2&#x27;</span></span><br><span class="line">app = Celery(broker=broker, backend=backend,</span><br><span class="line">             include=[<span class="string">&#x27;celery_task.tasks&#x27;</span>])</span><br><span class="line"></span><br><span class="line">app.conf.timezone = <span class="string">&#x27;Asia/Shanghai&#x27;</span></span><br><span class="line">app.conf.enable_utc = <span class="literal">False</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>tasks.py</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">from</span> .celery <span class="keyword">import</span> app</span><br><span class="line"><span class="keyword">from</span> model.db <span class="keyword">import</span> MongoGridFS</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">detect</span>(<span class="params">video_path, end_time, path</span>):</span></span><br><span class="line">    cap = cv2.VideoCapture(video_path)</span><br><span class="line">    fps = <span class="built_in">int</span>(cap.get(cv2.CAP_PROP_FPS))</span><br><span class="line">    width = <span class="built_in">int</span>(cap.get(cv2.CAP_PROP_FRAME_WIDTH))</span><br><span class="line">    height = <span class="built_in">int</span>(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))</span><br><span class="line">    </span><br><span class="line">    pos = cap.get(cv2.CAP_PROP_POS_FRAMES)</span><br><span class="line">    end_pos = <span class="built_in">int</span>(end_time) * fps</span><br><span class="line">    fourcc = cv2.VideoWriter_fourcc(<span class="string">&#x27;X&#x27;</span>, <span class="string">&#x27;V&#x27;</span>, <span class="string">&#x27;I&#x27;</span>, <span class="string">&#x27;D&#x27;</span>)</span><br><span class="line">    outfile = cv2.VideoWriter(path, fourcc, fps, (width, height))</span><br><span class="line">    <span class="keyword">while</span> (pos &lt;= end_pos):</span><br><span class="line">        success, frame = cap.read()</span><br><span class="line">        <span class="keyword">if</span> success:</span><br><span class="line">            <span class="comment"># cv2.imshow(&#x27;current frame&#x27;, frame)</span></span><br><span class="line">            outfile.write(frame)</span><br><span class="line">            <span class="keyword">if</span> cv2.waitKey(<span class="number">1</span>) &amp; <span class="number">0xFF</span> == <span class="built_in">ord</span>(<span class="string">&#x27;q&#x27;</span>):</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            pos = cap.get(cv2.CAP_PROP_POS_FRAMES)</span><br><span class="line">            <span class="keyword">if</span> pos &gt;= end_pos:</span><br><span class="line">                gfs = MongoGridFS(<span class="string">&#x27;fs&#x27;</span>, <span class="string">&#x27;video&#x27;</span>)</span><br><span class="line">                db = gfs.connect_db()</span><br><span class="line">                name = gfs.upload_file(db, path)</span><br><span class="line">                <span class="keyword">if</span> name:</span><br><span class="line">                    <span class="keyword">return</span> name</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;&#123;&#125;已存在&quot;</span>.<span class="built_in">format</span>(name)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&#x27;error&#x27;</span></span><br><span class="line"></span><br><span class="line">    cap.release()</span><br><span class="line">    outfile.release()</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装celery pip3 install celery==4.4.7</li>
+<li>celery worker -A celery_task -l info -P eventlet</li>
+<li>celery worker -A celery_task -l info  -P threads -c 100</li>
+<li>若保存 pip install eventlet</li>
+<li><img src="/2021/11/23/opencv/image-20211123155436340.png" alt="opencv"></li>
+<li>启动django项目</li>
+<li>开启摄像头推流</li>
+<li>请求<img src="/2021/11/23/opencv/image-20211123155653136.png" alt="opencv"></li>
+<li>结果<img src="/2021/11/23/opencv/image-20211123161450930.png" alt="opencv"></li>
+</ul>
+<h4 id="直播推流"><a href="#直播推流" class="headerlink" title="直播推流"></a>直播推流</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> queue</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv</span><br><span class="line"><span class="keyword">import</span> subprocess <span class="keyword">as</span> sp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Live</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.frame_queue = queue.Queue()</span><br><span class="line">        self.command = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="comment"># 自行设置</span></span><br><span class="line">        self.rtmpUrl = <span class="string">&quot;rtmp://192.168.17.6:1935/hls/lll.mp4&quot;</span></span><br><span class="line">        self.camera_path = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">read_frame</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;开启推流&quot;</span>)</span><br><span class="line">        cap = cv.VideoCapture(self.camera_path)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Get video information</span></span><br><span class="line">        fps = <span class="built_in">int</span>(cap.get(cv.CAP_PROP_FPS))</span><br><span class="line">        width = <span class="built_in">int</span>(cap.get(cv.CAP_PROP_FRAME_WIDTH))</span><br><span class="line">        height = <span class="built_in">int</span>(cap.get(cv.CAP_PROP_FRAME_HEIGHT))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># ffmpeg command</span></span><br><span class="line">        self.command = [<span class="string">&#x27;ffmpeg&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;-y&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;-f&#x27;</span>, <span class="string">&#x27;rawvideo&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;-vcodec&#x27;</span>, <span class="string">&#x27;rawvideo&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;-pix_fmt&#x27;</span>, <span class="string">&#x27;bgr24&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;-s&#x27;</span>, <span class="string">&quot;&#123;&#125;x&#123;&#125;&quot;</span>.<span class="built_in">format</span>(width, height),</span><br><span class="line">                        <span class="string">&#x27;-r&#x27;</span>, <span class="built_in">str</span>(fps),</span><br><span class="line">                        <span class="string">&#x27;-i&#x27;</span>, <span class="string">&#x27;-&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;-c:v&#x27;</span>, <span class="string">&#x27;libx264&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;-pix_fmt&#x27;</span>, <span class="string">&#x27;yuv420p&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;-preset&#x27;</span>, <span class="string">&#x27;ultrafast&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;-f&#x27;</span>, <span class="string">&#x27;flv&#x27;</span>,</span><br><span class="line">                        self.rtmpUrl]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># read webcamera</span></span><br><span class="line">        <span class="keyword">while</span> (cap.isOpened()):</span><br><span class="line">            ret, frame = cap.read()</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> ret:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;Opening camera is failed&quot;</span>)</span><br><span class="line">                <span class="comment"># 说实话这里的break应该替换为：</span></span><br><span class="line">                <span class="comment"># cap = cv.VideoCapture(self.camera_path)</span></span><br><span class="line">                <span class="comment"># 因为我这俩天遇到的项目里出现断流的毛病</span></span><br><span class="line">                <span class="comment"># 特别是拉取rtmp流的时候！！！！</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># put frame into queue</span></span><br><span class="line">            self.frame_queue.put(frame)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push_frame</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="comment"># 防止多线程时 command 未被设置</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(self.command) &gt; <span class="number">0</span>:</span><br><span class="line">                <span class="comment"># 管道配置</span></span><br><span class="line">                p = sp.Popen(self.command, stdin=sp.PIPE)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="keyword">if</span> self.frame_queue.empty() != <span class="literal">True</span>:</span><br><span class="line">                frame = self.frame_queue.get()</span><br><span class="line">                <span class="comment"># process frame</span></span><br><span class="line">                <span class="comment"># 你处理图片的代码</span></span><br><span class="line">                <span class="comment"># write to pipe</span></span><br><span class="line">                p.stdin.write(frame.tostring())</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span>(<span class="params">self</span>):</span></span><br><span class="line">        threads = [</span><br><span class="line">            threading.Thread(target=Live.read_frame, args=(self,)),</span><br><span class="line">            threading.Thread(target=Live.push_frame, args=(self,))</span><br><span class="line">        ]</span><br><span class="line">        <span class="comment"># [thread.setDaemon(True) for thread in threads]</span></span><br><span class="line">        [thread.start() <span class="keyword">for</span> thread <span class="keyword">in</span> threads]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    l = Live()</span><br><span class="line">    l.run()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="拉流"><a href="#拉流" class="headerlink" title="拉流"></a>拉流</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Producer</span>(<span class="params">threading.Thread</span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;docstring for Producer&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, rtmp_str</span>):</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">super</span>(Producer, self).__init__()</span><br><span class="line"></span><br><span class="line">        self.rtmp_str = rtmp_str</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 通过cv2中的类获取视频流操作对象cap</span></span><br><span class="line">        self.cap = cv2.VideoCapture(self.rtmp_str)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 调用cv2方法获取cap的视频帧（帧：每秒多少张图片）</span></span><br><span class="line">        <span class="comment"># fps = self.cap.get(cv2.CAP_PROP_FPS)</span></span><br><span class="line">        self.fps = self.cap.get(cv2.CAP_PROP_FPS)</span><br><span class="line">        <span class="built_in">print</span>(self.fps)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 获取cap视频流的每帧大小</span></span><br><span class="line">        self.width = <span class="built_in">int</span>(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))</span><br><span class="line">        self.height = <span class="built_in">int</span>(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))</span><br><span class="line">        self.size = (self.width, self.height)</span><br><span class="line">        <span class="built_in">print</span>(self.size)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 定义编码格式mpge-4</span></span><br><span class="line">        self.fourcc = cv2.VideoWriter_fourcc(<span class="string">&#x27;M&#x27;</span>, <span class="string">&#x27;P&#x27;</span>, <span class="string">&#x27;4&#x27;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 定义视频文件输入对象</span></span><br><span class="line">        self.outVideo = cv2.VideoWriter(<span class="string">&#x27;saveDir1.avi&#x27;</span>, self.fourcc, self.fps, self.size)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span>(<span class="params">self</span>):</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;in producer&#x27;</span>)</span><br><span class="line"></span><br><span class="line">        ret, image = self.cap.read()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> ret:</span><br><span class="line">            <span class="comment"># if ret == True:</span></span><br><span class="line"></span><br><span class="line">            self.outVideo.write(image)</span><br><span class="line"></span><br><span class="line">            cv2.imshow(<span class="string">&#x27;video&#x27;</span>, image)</span><br><span class="line"></span><br><span class="line">            cv2.waitKey(<span class="built_in">int</span>(<span class="number">1000</span> / <span class="built_in">int</span>(self.fps)))  <span class="comment"># 延迟</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> cv2.waitKey(<span class="number">1</span>) &amp; <span class="number">0xFF</span> == <span class="built_in">ord</span>(<span class="string">&#x27;q&#x27;</span>):</span><br><span class="line"></span><br><span class="line">                self.outVideo.release()</span><br><span class="line"></span><br><span class="line">                self.cap.release()</span><br><span class="line"></span><br><span class="line">                cv2.destroyAllWindows()</span><br><span class="line"></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">            ret, image = self.cap.read()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;run program&#x27;</span>)</span><br><span class="line">    rtmp_str = <span class="string">&#x27;rtsp://10.21.6.11/video/2.mkv&#x27;</span></span><br><span class="line"></span><br><span class="line">    producer = Producer(rtmp_str)  </span><br><span class="line">    producer.start()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="Celery-gt-Flower-gt-Prometheus-gt-Grafana"><a href="#Celery-gt-Flower-gt-Prometheus-gt-Grafana" class="headerlink" title="Celery -&gt; Flower -&gt; Prometheus -&gt; Grafana"></a>Celery -&gt; Flower -&gt; Prometheus -&gt; Grafana</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">1.启动redis服务(celery消息中间件)</span><br><span class="line">docker run --name redis -d -p 6379:6379 redis</span><br><span class="line">2.启动celery服务</span><br><span class="line">celery -A celery_task worker -l info</span><br><span class="line">3.启动flower监控</span><br><span class="line">celery -A celery_task flower</span><br><span class="line">4.配置Prometheus</span><br><span class="line">vim /usr/local/prometheus/prometheus.yml</span><br><span class="line">global:</span><br><span class="line">  scrape_interval:     15s</span><br><span class="line">  evaluation_interval: 15s</span><br><span class="line"></span><br><span class="line">scrape_configs:</span><br><span class="line">  - job_name: prometheus</span><br><span class="line">    static_configs:</span><br><span class="line">      - targets: [&#x27;localhost:9090&#x27;]</span><br><span class="line">  - job_name: flower</span><br><span class="line">    static_configs:</span><br><span class="line">      - targets: [&#x27;localhost:5555&#x27;]</span><br><span class="line">5.docker启动prometheus</span><br><span class="line">docker run --name prometheus -v /usr/local/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml -p 9090:9090 --network host prom/prometheus</span><br><span class="line">6.docker启动Grafana</span><br><span class="line">docker run --name Grafana -d -v grafana-storage:/var/lib/grafana -p 3000:3000 --network host grafana/grafana</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="linux安装opencv问题解决"><a href="#linux安装opencv问题解决" class="headerlink" title="linux安装opencv问题解决"></a>linux安装opencv问题解决</h4><p>centos</p>
+<p><img src="/2021/11/23/opencv/image-20211130174239356.png" alt="image-20211130174239356"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install libSM-1.2.2-2.el7.x86_64 --setopt=protected_multilib=false -y</span><br><span class="line">yum install libXrender-0.9.10-1.el7.x86_64 --setopt=protected_multilib=false -y</span><br><span class="line">yum install libXext-1.3.3-3.el7.x86_64 --setopt=protected_multilib=false -y</span><br></pre></td></tr></table></figure>
+
+<p>ubuntu</p>
+<p><img src="/2021/11/23/opencv/image-20211223141710233.png" alt="opencv"></p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pip install opencv<span class="literal">-python</span> <span class="literal">-i</span> https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line">pip install opencv<span class="literal">-contrib</span><span class="literal">-python</span> <span class="literal">-i</span> https://pypi.tuna.tsinghua.edu.cn/simple</span><br><span class="line"></span><br><span class="line">apt<span class="literal">-get</span> update</span><br><span class="line">apt<span class="literal">-get</span> install <span class="literal">-y</span> libgl1<span class="literal">-mesa</span><span class="literal">-dev</span></span><br><span class="line">apt<span class="literal">-get</span> install libgtk2.<span class="number">0</span><span class="literal">-dev</span> pkg<span class="literal">-config</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Ubuntu编译opencv支持h264"><a href="#Ubuntu编译opencv支持h264" class="headerlink" title="Ubuntu编译opencv支持h264"></a>Ubuntu编译opencv支持h264</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># https://zhuanlan.zhihu.com/p/113666046（下载conda脚本安装对应python版本）</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译opencv遇到的问题</span></span><br><span class="line"><span class="comment"># pip install </span></span><br><span class="line">root@f9469a74f572:/home<span class="comment"># python -c &#x27;import cv2&#x27;</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;string&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;/root/anaconda3/lib/python3.7/site-packages/cv2/__init__.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .cv2 import *</span><br><span class="line">ImportError: libhdf5_serial.so.<span class="number">100</span>: cannot open shared object file: No such file or directory</span><br><span class="line"></span><br><span class="line"><span class="comment"># https://stackoverflow.com/questions/48965309/h5py-import-error-on-libhdf5-serial-so-100 （下载依赖）</span></span><br><span class="line">apt<span class="literal">-get</span> update</span><br><span class="line">apt<span class="literal">-get</span> install libhdf5<span class="literal">-dev</span></span><br><span class="line">apt<span class="literal">-get</span> install libhdf5<span class="literal">-serial</span><span class="literal">-dev</span></span><br><span class="line"></span><br><span class="line">apt<span class="literal">-get</span> install libcblas<span class="literal">-dev</span></span><br><span class="line"><span class="comment"># 问题</span></span><br><span class="line">Package libcblas<span class="literal">-dev</span> is not available, but is referred to by another package.</span><br><span class="line">This may mean that the package is missing, has been obsoleted, or</span><br><span class="line">is only available from another source</span><br><span class="line">However the following packages replace it:</span><br><span class="line">  libatlas<span class="literal">-base</span><span class="literal">-dev</span></span><br><span class="line"></span><br><span class="line">apt<span class="literal">-get</span> install libatlas<span class="literal">-base</span><span class="literal">-dev</span></span><br><span class="line"></span><br><span class="line">apt<span class="literal">-get</span> install libjasper<span class="literal">-dev</span></span><br><span class="line"><span class="comment"># 问题</span></span><br><span class="line">Unable to locate package libjasper<span class="literal">-dev</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决</span></span><br><span class="line">apt<span class="literal">-get</span> install software<span class="literal">-properties</span><span class="literal">-common</span></span><br><span class="line"><span class="built_in">add-apt</span><span class="literal">-repository</span> <span class="string">&quot;deb http://security.ubuntu.com/ubuntu xenial-security main&quot;</span></span><br><span class="line">apt<span class="literal">-get</span> update</span><br><span class="line"></span><br><span class="line">apt<span class="literal">-get</span> install libjasper<span class="literal">-dev</span> </span><br><span class="line">apt<span class="literal">-get</span> install libqtgui4 </span><br><span class="line">apt<span class="literal">-get</span> install libqt4<span class="literal">-test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 问题</span></span><br><span class="line">root@f9469a74f572:/home<span class="comment"># python -c &#x27;import cv2&#x27;</span></span><br><span class="line"></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;string&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;/root/anaconda3/lib/python3.7/site-packages/cv2/__init__.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .cv2 import *</span><br><span class="line">ImportError: libtesseract.so.<span class="number">4</span>: cannot open shared object file: No such file or directory</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决 https://askubuntu.com/questions/1108884/ubuntu-18-04-error-install-tesseract</span></span><br><span class="line"></span><br><span class="line">apt install libtesseract<span class="literal">-dev</span> libleptonica<span class="literal">-dev</span> liblept5</span><br><span class="line">apt install tesseract<span class="literal">-ocr</span> <span class="literal">-y</span></span><br><span class="line"><span class="comment"># 问题</span></span><br><span class="line">root@f9469a74f572:/home<span class="comment"># python -c &#x27;import cv2&#x27;</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;string&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;/root/anaconda3/lib/python3.7/site-packages/cv2/__init__.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .cv2 import *</span><br><span class="line">ImportError: libdc1394.so.<span class="number">22</span>: cannot open shared object file: No such file or directory</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决 https://blog.csdn.net/u013171226/article/details/122035605</span></span><br><span class="line">apt<span class="literal">-get</span> install libgtk2.<span class="number">0</span><span class="literal">-0</span> </span><br><span class="line">apt<span class="literal">-get</span> install libdc1394<span class="literal">-22</span><span class="literal">-dev</span></span><br><span class="line"></span><br><span class="line">root@f9469a74f572:/home<span class="comment"># python -c &#x27;import cv2&#x27;</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;string&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;/root/anaconda3/lib/python3.7/site-packages/cv2/__init__.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .cv2 import *</span><br><span class="line">ImportError: libgstbase<span class="literal">-1</span>.<span class="number">0</span>.so.<span class="number">0</span>: cannot open shared object file: No such file or directory</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决</span></span><br><span class="line">root@f9469a74f572:/usr/lib/x86_64<span class="literal">-linux</span><span class="literal">-gnu</span><span class="comment"># apt-get install libgstreamer1.0-0</span></span><br><span class="line">Reading package lists... Done</span><br><span class="line">Building dependency tree</span><br><span class="line">Reading state information... Done</span><br><span class="line">The following additional packages will be installed:</span><br><span class="line">  libcap2 libcap2<span class="literal">-bin</span> libpam<span class="literal">-cap</span></span><br><span class="line">需要先安装 libcap2 libcap2<span class="literal">-bin</span> libpam<span class="literal">-cap</span> 三个包再安装libgstreamer1.<span class="number">0</span><span class="literal">-0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 问题</span></span><br><span class="line">root@f9469a74f572:/home<span class="comment"># python -c &#x27;import cv2&#x27;</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;string&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;/root/anaconda3/lib/python3.7/site-packages/cv2/__init__.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .cv2 import *</span><br><span class="line">ImportError: libgstapp<span class="literal">-1</span>.<span class="number">0</span>.so.<span class="number">0</span>: cannot open shared object file: No such file or directory</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决</span></span><br><span class="line"></span><br><span class="line">apt<span class="literal">-get</span> -<span class="literal">-reinstall</span> install libgstreamer<span class="literal">-plugins</span><span class="literal">-base1</span>.<span class="number">0</span><span class="literal">-0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 问题</span></span><br><span class="line">root@f9469a74f572:/home<span class="comment"># python -c &#x27;import cv2&#x27;</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;string&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;/root/anaconda3/lib/python3.7/site-packages/cv2/__init__.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .cv2 import *</span><br><span class="line">ImportError: libavcodec.so.<span class="number">57</span>: cannot open shared object file: No such file or directory</span><br><span class="line"></span><br><span class="line">解决</span><br><span class="line">apt<span class="literal">-get</span> install  libavcodec<span class="literal">-dev</span> </span><br><span class="line"></span><br><span class="line"><span class="comment"># 问题</span></span><br><span class="line">root@f9469a74f572:/<span class="comment"># python -c &#x27;import cv2&#x27;</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;string&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;/root/anaconda3/lib/python3.7/site-packages/cv2/__init__.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .cv2 import *</span><br><span class="line">ImportError: libavformat.so.<span class="number">57</span>: cannot open shared object file: No such file or directory</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决</span></span><br><span class="line">apt<span class="literal">-get</span> install libav<span class="built_in">format-dev</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 问题</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;string&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;/opt/conda/lib/python3.7/site-packages/cv2/__init__.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .cv2 import *</span><br><span class="line">ImportError: libswscale.so.<span class="number">4</span>: cannot open shared object file: No such file or directory</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决</span></span><br><span class="line">apt<span class="literal">-get</span> install libswscale<span class="literal">-dev</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 问题</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;string&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;/root/anaconda3/lib/python3.7/site-packages/cv2/__init__.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .cv2 import *</span><br><span class="line">ImportError: libgtk<span class="literal">-3</span>.so.<span class="number">0</span>: cannot open shared object file: No such file or directory</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决</span></span><br><span class="line">apt install libgtk<span class="literal">-3</span><span class="literal">-dev</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 问题</span></span><br><span class="line">root@f9469a74f572:~/anaconda3/lib/python3.<span class="number">7</span>/site<span class="literal">-packages</span><span class="comment"># python -c &#x27;import cv2&#x27;</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;string&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;/root/anaconda3/lib/python3.7/site-packages/cv2/__init__.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .cv2 import *</span><br><span class="line">ImportError: /root/anaconda3/bin/../lib/./libharfbuzz.so.<span class="number">0</span>: undefined symbol: FT_Done_MM_Var</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决</span></span><br><span class="line"><span class="built_in">rm</span> <span class="literal">-rf</span> /root/anaconda3/bin/../lib/./libharfbuzz.so.<span class="number">0</span></span><br><span class="line"><span class="built_in">cp</span> /usr/lib/x86_64<span class="literal">-linux</span><span class="literal">-gnu</span>/libharfbuzz.so.<span class="number">0</span>  /root/anaconda3/bin/../lib/./</span><br><span class="line"></span><br><span class="line"><span class="comment"># 问题 (解决方案同上)</span></span><br><span class="line">root@f9469a74f572:~/anaconda3/lib<span class="comment"># python -c &#x27;import cv2&#x27;</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;string&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;/root/anaconda3/lib/python3.7/site-packages/cv2/__init__.py&quot;</span>, line <span class="number">8</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    from .cv2 import *</span><br><span class="line">ImportError: /root/anaconda3/bin/../lib/libfontconfig.so.<span class="number">1</span>: undefined symbol: FT_Done_MM_Var</span><br><span class="line"></span><br><span class="line"> <span class="comment"># ubtntu容器pip清华园下载报错</span></span><br><span class="line">pip install <span class="literal">-r</span> requirements.txt <span class="literal">-i</span> http://mirrors.aliyun.com/pypi/simple -<span class="literal">-trusted</span><span class="literal">-host</span> mirrors.aliyun.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决docker容器内Ubuntu系统语言中文乱码问题</span></span><br><span class="line">locale <span class="comment"># 查看当前系统语言环境</span></span><br><span class="line">root@f9469a74f572:/<span class="comment"># locale</span></span><br><span class="line">LANG=</span><br><span class="line">LANGUAGE=</span><br><span class="line">LC_CTYPE=<span class="string">&quot;POSIX&quot;</span></span><br><span class="line">LC_NUMERIC=<span class="string">&quot;POSIX&quot;</span></span><br><span class="line">LC_TIME=<span class="string">&quot;POSIX&quot;</span></span><br><span class="line">LC_COLLATE=<span class="string">&quot;POSIX&quot;</span></span><br><span class="line">LC_MONETARY=<span class="string">&quot;POSIX&quot;</span></span><br><span class="line">LC_MESSAGES=<span class="string">&quot;POSIX&quot;</span></span><br><span class="line">LC_PAPER=<span class="string">&quot;POSIX&quot;</span></span><br><span class="line">LC_NAME=<span class="string">&quot;POSIX&quot;</span></span><br><span class="line">LC_ADDRESS=<span class="string">&quot;POSIX&quot;</span></span><br><span class="line">LC_TELEPHONE=<span class="string">&quot;POSIX&quot;</span></span><br><span class="line">LC_MEASUREMENT=<span class="string">&quot;POSIX&quot;</span></span><br><span class="line">LC_IDENTIFICATION=<span class="string">&quot;POSIX&quot;</span></span><br><span class="line">LC_ALL=</span><br><span class="line"></span><br><span class="line">locale <span class="literal">-a</span> <span class="comment"># 查看当前系统可用语言环境</span></span><br><span class="line">root@f9469a74f572:/<span class="comment"># locale -a</span></span><br><span class="line">C</span><br><span class="line">C.UTF<span class="literal">-8</span></span><br><span class="line">POSIX</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加系统语言</span></span><br><span class="line">locale<span class="literal">-gen</span> en_US.UTF<span class="literal">-8</span></span><br><span class="line">bash: locale<span class="literal">-gen</span>: command not found</span><br><span class="line">apt<span class="literal">-get</span> install <span class="literal">-y</span> locales</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export LC_ALL=en_US.UTF-8&quot;</span> &gt;&gt; /root/.bashrc</span><br><span class="line">source /etc/profile</span><br><span class="line">source /root/.bashrc</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 解决（先删除容器内系统语言环境，从宿主机复制语言环境到容器内，建议不要覆盖）</span></span><br><span class="line"><span class="built_in">rm</span> <span class="literal">-rf</span> /usr/share/locale/</span><br><span class="line">docker <span class="built_in">cp</span> /usr/share/locale/ 容器名:/usr/share/locale/</span><br><span class="line">docker <span class="built_in">cp</span> /usr/share/i18n/ 容器名:/usr/share/i18n/</span><br><span class="line"></span><br><span class="line"><span class="comment"># conda</span></span><br><span class="line">/root/anaconda3/lib/python3.<span class="number">7</span>/site<span class="literal">-packages</span></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+	  
+	  
+		   <div>
+			 <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:20px;">-------------End-------------</div>
+    
+</div>
+		   </div>
+	   
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/opencv/" rel="tag"># opencv</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/10/25/restframework/" rel="prev" title="restframework">
+      <i class="fa fa-chevron-left"></i> restframework
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/12/10/Go/" rel="next" title="Go">
+      Go <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#rtsp%E5%90%8E%E5%8F%B0%E8%A7%86%E9%A2%91%E6%B5%81%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">rtsp后台视频流搭建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ffmpeg"><span class="nav-number">2.</span> <span class="nav-text">ffmpeg</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#srs"><span class="nav-number">3.</span> <span class="nav-text">srs</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-rtmp%E6%90%AD%E5%BB%BA%E8%A7%86%E9%A2%91%E7%82%B9%E6%92%AD"><span class="nav-number">4.</span> <span class="nav-text">nginx+rtmp搭建视频点播</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ffmpeg%E6%8E%A8%E6%9C%AC%E5%9C%B0%E6%91%84%E5%83%8F%E5%A4%B4%E5%BD%95%E5%83%8F%E5%88%B0rtmp%E6%9C%8D%E5%8A%A1%E5%90%8E%E5%8F%B0"><span class="nav-number">5.</span> <span class="nav-text">ffmpeg推本地摄像头录像到rtmp服务后台</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#opencv%E6%88%AA%E5%8F%96rtmp%E8%A7%86%E9%A2%91%E6%B5%81%E5%AD%98%E6%94%BEmongodb"><span class="nav-number">6.</span> <span class="nav-text">opencv截取rtmp视频流存放mongodb</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81"><span class="nav-number">7.</span> <span class="nav-text">直播推流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%89%E6%B5%81"><span class="nav-number">8.</span> <span class="nav-text">拉流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Celery-gt-Flower-gt-Prometheus-gt-Grafana"><span class="nav-number">9.</span> <span class="nav-text">Celery -&gt; Flower -&gt; Prometheus -&gt; Grafana</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#linux%E5%AE%89%E8%A3%85opencv%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3"><span class="nav-number">10.</span> <span class="nav-text">linux安装opencv问题解决</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Ubuntu%E7%BC%96%E8%AF%91opencv%E6%94%AF%E6%8C%81h264"><span class="nav-number">11.</span> <span class="nav-text">Ubuntu编译opencv支持h264</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Admin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Admin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-07 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Admin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共151.4k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

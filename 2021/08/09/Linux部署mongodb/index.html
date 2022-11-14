@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="下载安装包12打开网站 https:&#x2F;&#x2F;www.mongodb.com&#x2F;download-center&#x2F;community查找与Linux版本一致的MongoDB安装包可用 wget + 下载地址下载  解压12345- 解压tar -zxvf mongodb-linux-x86_64-rhel70-4.2.3.tgz- 将解压后的目录剪切到一个新目录 mongodbmv mongodb-linu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux部署mongodb">
+<meta property="og:url" content="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/index.html">
+<meta property="og:site_name" content="Admin">
+<meta property="og:description" content="下载安装包12打开网站 https:&#x2F;&#x2F;www.mongodb.com&#x2F;download-center&#x2F;community查找与Linux版本一致的MongoDB安装包可用 wget + 下载地址下载  解压12345- 解压tar -zxvf mongodb-linux-x86_64-rhel70-4.2.3.tgz- 将解压后的目录剪切到一个新目录 mongodbmv mongodb-linu">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210809155244709.png">
+<meta property="og:image" content="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210810151512618.png">
+<meta property="og:image" content="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210810151601249.png">
+<meta property="og:image" content="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210810151724375.png">
+<meta property="og:image" content="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210810152113408.png">
+<meta property="og:image" content="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210811224656467.png">
+<meta property="og:image" content="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210811230220996.png">
+<meta property="og:image" content="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210812134215452.png">
+<meta property="og:image" content="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210812164615833.png">
+<meta property="og:image" content="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20220117163017436.png">
+<meta property="article:published_time" content="2021-08-09T08:00:31.000Z">
+<meta property="article:modified_time" content="2022-08-23T03:34:50.915Z">
+<meta property="article:author" content="Admin">
+<meta property="article:tag" content="mongodb">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210809155244709.png">
+
+<link rel="canonical" href="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>linux部署mongodb | Admin</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Admin" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Admin</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Admin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Admin">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          linux部署mongodb
+        </h1>
+
+        <div class="post-meta">
+		<!-- 设置置顶标志 -->
+			
+			  <i class="fa fa-thumb-tack"></i>
+			  <font color=7D26CD>置顶</font>
+			  <span class="post-meta-divider">|</span>
+			
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-09 16:00:31" itemprop="dateCreated datePublished" datetime="2021-08-09T16:00:31+08:00">2021-08-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-23 11:34:50" itemprop="dateModified" datetime="2022-08-23T11:34:50+08:00">2022-08-23</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="下载安装包"><a href="#下载安装包" class="headerlink" title="下载安装包"></a>下载安装包</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">打开网站 https://www.mongodb.com/download-center/community查找与Linux版本一致的MongoDB安装包</span><br><span class="line">可用 wget + 下载地址下载</span><br></pre></td></tr></table></figure>
+
+<h4 id="解压"><a href="#解压" class="headerlink" title="解压"></a>解压</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- 解压</span><br><span class="line">tar -zxvf mongodb-linux-x86_64-rhel70-<span class="number">4.2</span><span class="number">.3</span>.tgz</span><br><span class="line"></span><br><span class="line">- 将解压后的目录剪切到一个新目录 mongodb</span><br><span class="line">mv mongodb-linux-x86_64-rhel70-<span class="number">4.2</span><span class="number">.3</span> mongodb</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建目录"><a href="#创建目录" class="headerlink" title="创建目录"></a>创建目录</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">- 创建数据库目录</span><br><span class="line">cd mongodb</span><br><span class="line">mkdir -p data/db</span><br><span class="line"></span><br><span class="line">- 创建日志目录</span><br><span class="line">mkdir log</span><br><span class="line"></span><br><span class="line">- 创建配置文件目录</span><br><span class="line">mkdir etc</span><br><span class="line">vim ./etc/mongodb.conf</span><br><span class="line"></span><br><span class="line">- 在新建的mongodb.conf输入下面内容</span><br><span class="line">dbpath=/root/mongodb/data/db  <span class="comment">#数据文件存放目录</span></span><br><span class="line">logpath=/root/mongodb/log/mongodb.log   <span class="comment">#日志文件</span></span><br><span class="line">logappend=true  <span class="comment">#错误日志采用追加模式</span></span><br><span class="line">port=<span class="number">27017</span>   <span class="comment">#端口</span></span><br><span class="line">fork=true    <span class="comment">#以守护程序的方式启用，即在后台运行</span></span><br><span class="line">journal=true  <span class="comment">#启用日志文件，默认启用</span></span><br><span class="line">quiet=true  <span class="comment">#这个选项可以过滤掉一些无用的日志信息，若需要调试使用请设置为false</span></span><br><span class="line"><span class="comment">#auth=true #需要认证。如果放开注释，就必须创建MongoDB的账号，使用账号与密码才可远程访问，第一次安装建议注释</span></span><br><span class="line"><span class="comment">#bind_ip=0.0.0.0 #允许远程访问，或者直接注释，127.0.0.1是只允许本地访问</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="启动MongoDB"><a href="#启动MongoDB" class="headerlink" title="启动MongoDB"></a>启动MongoDB</h4><p><img src="/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210809155244709.png" alt="linux部署mongodb"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- 在/root/mongodb/<span class="built_in">bin</span>工作目录下执行下面命令开始启动Mongodb</span><br><span class="line">cd <span class="built_in">bin</span></span><br><span class="line">pwd</span><br><span class="line">./mongod --config /root/mongodb/etc/mongodb.conf</span><br><span class="line">netstat -lanp | grep <span class="string">&quot;27017&quot;</span></span><br><span class="line">ps -ef | grep mongo</span><br><span class="line"></span><br><span class="line">- 关闭服务</span><br><span class="line">[root@localhost <span class="built_in">bin</span>]<span class="comment"># ./mongod -f ../etc/mongodb.conf --shutdown</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="创建MongoDB账号"><a href="#创建MongoDB账号" class="headerlink" title="创建MongoDB账号"></a>创建MongoDB账号</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost mongodb]<span class="comment"># cd bin</span></span><br><span class="line">[root@localhost <span class="built_in">bin</span>]<span class="comment"># ./mongo   # 启动服务</span></span><br><span class="line">&gt; show dbs</span><br><span class="line">admin   <span class="number">0.000</span>GB</span><br><span class="line">config  <span class="number">0.000</span>GB</span><br><span class="line">local   <span class="number">0.000</span>GB</span><br><span class="line">&gt; use admin</span><br><span class="line">switched to db admin</span><br><span class="line"></span><br><span class="line">&gt; db.createUser(&#123; user: <span class="string">&#x27;root&#x27;</span>, pwd: <span class="string">&#x27;1018&#x27;</span>,roles: [ &#123; role: <span class="string">&quot;root&quot;</span>, db: <span class="string">&quot;admin&quot;</span> &#125;] &#125;)</span><br><span class="line">Successfully added user: &#123;</span><br><span class="line">	<span class="string">&quot;user&quot;</span> : <span class="string">&quot;root&quot;</span>,</span><br><span class="line">	<span class="string">&quot;roles&quot;</span> : [</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="string">&quot;role&quot;</span> : <span class="string">&quot;root&quot;</span>,</span><br><span class="line">			<span class="string">&quot;db&quot;</span> : <span class="string">&quot;admin&quot;</span></span><br><span class="line">		&#125;</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用auth=true认证(需要在配置文件中添加auth=true，然后停止服务重启服务)</span></span><br><span class="line">&gt; db.auth(<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;1018&#x27;</span>)</span><br><span class="line"><span class="number">1</span></span><br><span class="line">&gt; show dbs</span><br><span class="line">&gt; db</span><br><span class="line">admin</span><br><span class="line">&gt; use test</span><br><span class="line">switched to db test</span><br><span class="line">&gt; db.firstCollection.save(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;lhj&quot;</span>,<span class="string">&quot;age&quot;</span>:<span class="string">&quot;25&quot;</span>&#125;)</span><br><span class="line">WriteResult(&#123; <span class="string">&quot;nInserted&quot;</span> : <span class="number">1</span> &#125;)</span><br><span class="line">&gt; db.firstCollection.find(&#123;name:<span class="string">&quot;lhj&quot;</span>&#125;)</span><br><span class="line">&#123; <span class="string">&quot;_id&quot;</span> : ObjectId(<span class="string">&quot;611223f00e0a6be033a22c84&quot;</span>), <span class="string">&quot;name&quot;</span> : <span class="string">&quot;lhj&quot;</span>, <span class="string">&quot;age&quot;</span> : <span class="string">&quot;25&quot;</span> &#125;</span><br><span class="line">&gt; </span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">- 关闭mongo服务  </span><br><span class="line">&gt; db.shutdownServer()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建用户</span></span><br><span class="line">&gt; use admin</span><br><span class="line"></span><br><span class="line">db.createUser(</span><br><span class="line">	&#123;</span><br><span class="line">		user:<span class="string">&quot;root&quot;</span>,</span><br><span class="line">		pwd:<span class="string">&quot;1018&quot;</span>,</span><br><span class="line">		roles:[&#123;role:<span class="string">&quot;root&quot;</span>,db:<span class="string">&quot;admin&quot;</span>&#125;]</span><br><span class="line">	&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改密码</span></span><br><span class="line">方法<span class="number">1</span>：db.changeUserPassword(<span class="string">&quot;usertest&quot;</span>,<span class="string">&quot;changepass&quot;</span>);</span><br><span class="line"></span><br><span class="line">方法<span class="number">2</span>：db.updateUser(<span class="string">&quot;usertest&quot;</span>,&#123;pwd:<span class="string">&quot;changepass1&quot;</span>&#125;)；</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改用户权限</span></span><br><span class="line">db.updateUser(<span class="string">&quot;root&quot;</span>,&#123;roles:[ &#123;role:<span class="string">&quot;root&quot;</span>,db:<span class="string">&quot;admin&quot;</span>&#125; ]&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除用户</span></span><br><span class="line">db.dropUser(<span class="string">&#x27;xxx&#x27;</span>)</span><br><span class="line"></span><br><span class="line">- 这时候MongoDB的admin数据库就有了账号，启用auth=true，重启后，再连接就需要账号密码授权了</span><br><span class="line"></span><br><span class="line">数据库用户角色：read、readWrite;</span><br><span class="line">数据库管理角色：dbAdmin、dbOwner、userAdmin；</span><br><span class="line">集群管理角色：clusterAdmin、clusterManager、clusterMonitor、hostManager；</span><br><span class="line">备份恢复角色：backup、restore；</span><br><span class="line">所有数据库角色：readAnyDatabase、readWriteAnyDatabase、userAdminAnyDatabase、dbAdminAnyDatabase</span><br><span class="line">超级用户角色：root；这里还有几个角色间接或直接提供了系统超级用户的访问（dbOwner 、userAdmin、userAdminAnyDatabase）</span><br><span class="line">内部角色：__system</span><br><span class="line"></span><br><span class="line">Read：允许用户读取指定数据库</span><br><span class="line">readWrite：允许用户读写指定数据库</span><br><span class="line">dbAdmin：允许用户在指定数据库中执行管理函数，如索引创建、删除，查看统计或访问system.profile</span><br><span class="line">userAdmin：允许用户向system.users集合写入，可以找指定数据库里创建、删除和管理用户</span><br><span class="line">clusterAdmin：只在admin数据库中可用，赋予用户所有分片和复制集相关函数的管理权限。</span><br><span class="line">readAnyDatabase：只在admin数据库中可用，赋予用户所有数据库的读权限</span><br><span class="line">readWriteAnyDatabase：只在admin数据库中可用，赋予用户所有数据库的读写权限</span><br><span class="line">userAdminAnyDatabase：只在admin数据库中可用，赋予用户所有数据库的userAdmin权限</span><br><span class="line">dbAdminAnyDatabase：只在admin数据库中可用，赋予用户所有数据库的dbAdmin权限。</span><br><span class="line">root：只在admin数据库中可用。超级账号，超级权限</span><br><span class="line">dbOwner:代表数据库所有者角色，拥有最高该数据库最高权限</span><br></pre></td></tr></table></figure>
+
+<h4 id="防火墙端口开放"><a href="#防火墙端口开放" class="headerlink" title="防火墙端口开放"></a>防火墙端口开放</h4><ul>
+<li><strong>如果外网ip不能访问、也就是客户端无法连接，可能是需要放行防火墙端口</strong></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">systemctl start firewalld  <span class="comment"># 开启防火墙</span></span><br><span class="line"></span><br><span class="line">systemctl status firewalld <span class="comment"># 防火墙状态</span></span><br><span class="line"></span><br><span class="line">firewall-cmd --zone=public --add-port=<span class="number">27017</span>/tcp --permanent <span class="comment"># 设置防火墙mongo放行端口(–permanent代表永久开启)</span></span><br><span class="line"></span><br><span class="line">firewall-cmd --reload <span class="comment"># 重启防火墙</span></span><br><span class="line"></span><br><span class="line">firewall-cmd --<span class="built_in">list</span>-ports <span class="comment"># 查看防火墙放行端口</span></span><br><span class="line"></span><br><span class="line">firewall-cmd --zone=public --remove-port=<span class="number">27017</span>/tcp --permanent  <span class="comment"># 关闭防火墙端口</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启设置防火墙</span></span><br><span class="line">（<span class="number">1</span>）设置开机启用防火墙：systemctl enable firewalld.service</span><br><span class="line"></span><br><span class="line">（<span class="number">2</span>）设置开机禁用防火墙：systemctl disable firewalld.service</span><br><span class="line"></span><br><span class="line">–zone <span class="comment">#作用域</span></span><br><span class="line">–add-port=<span class="number">9200</span>/tcp <span class="comment">#添加端口，格式为：端口/通讯协议</span></span><br><span class="line">–permanent <span class="comment">#永久生效，没有此参数重启后失效</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加端口后，必须用命令firewall-cmd --reload重新加载一遍才会生效</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="本地配置MongoDB服务"><a href="#本地配置MongoDB服务" class="headerlink" title="本地配置MongoDB服务"></a>本地配置MongoDB服务</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">- 本地MongoDB路径：D:\MongoDB\Server\<span class="number">3.4</span></span><br><span class="line">	- 创建data文件夹</span><br><span class="line">    - 创建mongo.config(config文件可以先创建txt保存全部类型后更改为config)</span><br><span class="line">    - 进入data文件夹</span><br><span class="line">    - 创建log -&gt; mongo.log</span><br><span class="line">    - 创建db</span><br><span class="line">    - mongo.config 文件内容如下</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    dbpath=D:\MongoDB\Server\3.4\data\db</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">	logpath=D:\MongoDB\Server\3.4\data\log\mongo.log</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    - cmd以管理员身份进入 d:</span><br><span class="line">    - cd D:\MongoDB\Server\<span class="number">3.4</span>\<span class="built_in">bin</span></span><br><span class="line">    - mongod.exe --config D:\MongoDB\Server\<span class="number">3.4</span>\mongo.config --install --serviceName <span class="string">&quot;MongoDB&quot;</span></span><br><span class="line">    </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="测试本地连接"><a href="#测试本地连接" class="headerlink" title="测试本地连接"></a>测试本地连接</h4><p><strong>新建连接</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.nosqlbooster.com/downloads">https://www.nosqlbooster.com/downloads</a></li>
+</ul>
+<p><img src="/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210810151512618.png" alt="linux部署mongodb"></p>
+<p><strong>开启认证</strong></p>
+<p><img src="/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210810151601249.png" alt="linux部署mongodb"></p>
+<p><strong>默认的库</strong></p>
+<p><img src="/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210810151724375.png" alt="linux部署mongodb"></p>
+<p><strong>查看数据</strong></p>
+<p><img src="/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210810152113408.png" alt="linux部署mongodb"></p>
+<h4 id="python连接"><a href="#python连接" class="headerlink" title="python连接"></a>python连接</h4><ul>
+<li><p>pip3 install pymongo</p>
+</li>
+<li><p>无密码</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pymongo <span class="keyword">import</span> MongoClient</span><br><span class="line">client = MongoClient(<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">27017</span>)  <span class="comment"># 建立客户端对象</span></span><br><span class="line">db = client.mydb  <span class="comment"># 连接mydb数据库，没有则自动创建</span></span><br><span class="line">collection = db.testset   <span class="comment"># 使用mydb下的testset集合，没有则自动创建</span></span><br><span class="line">collection.insert_one(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;lxx&quot;</span>,<span class="string">&quot;age&quot;</span>:<span class="number">18</span>&#125;)   <span class="comment"># 插入一条数据，如果没出错那么说明连接成功</span></span><br><span class="line"><span class="comment"># 下面是遍历查询数据</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> collection.find():</span><br><span class="line">    <span class="built_in">print</span>(i)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>有密码</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pymongo <span class="keyword">import</span> MongoClient</span><br><span class="line"></span><br><span class="line">client = MongoClient(<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">27017</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 连接mydb数据库,账号密码认证</span></span><br><span class="line">db = client.admin  </span><br><span class="line">db.authenticate(<span class="string">&quot;root&quot;</span>, <span class="string">&#x27;1018&#x27;</span>, mechanism=<span class="string">&#x27;SCRAM-SHA-1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">collection = db.myset  <span class="comment"># admin下的myset，没有则新建</span></span><br><span class="line">collection.insert_one(&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;lxx&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> collection.find():</span><br><span class="line">    <span class="built_in">print</span>(i)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="pymongo简单使用"><a href="#pymongo简单使用" class="headerlink" title="pymongo简单使用"></a>pymongo简单使用</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pymongo <span class="keyword">import</span> MongoClient</span><br><span class="line"></span><br><span class="line">client = MongoClient(<span class="string">&#x27;192.168.17.210&#x27;</span>, <span class="number">27017</span>)</span><br><span class="line"></span><br><span class="line">db = client.admin</span><br><span class="line">db.authenticate(<span class="string">&quot;root&quot;</span>, <span class="string">&#x27;1018&#x27;</span>, mechanism=<span class="string">&#x27;SCRAM-SHA-1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">collection = db[<span class="string">&#x27;test&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看全部聚集名称</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(db.collection_names())</span><br><span class="line"><span class="string">&quot;&quot;&quot;[&#x27;system.users&#x27;, &#x27;test&#x27;, &#x27;system.version&#x27;]&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>查看聚集的一条记录</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(collection.find_one())</span><br><span class="line"><span class="built_in">print</span>(collection.find_one(&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;xxx&quot;</span>&#125;))</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;&#123;&#x27;_id&#x27;: ObjectId(&#x27;61138186c729b21c58113dce&#x27;), &#x27;name&#x27;: &#x27;lxx&#x27;, &#x27;age&#x27;: 18&#125;</span></span><br><span class="line"><span class="string">&#123;&#x27;_id&#x27;: ObjectId(&#x27;611383bfc729b207f4c4570d&#x27;), &#x27;name&#x27;: &#x27;xxx&#x27;, &#x27;age&#x27;: 18&#125;&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>查看聚集的多条记录</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> collection.find():</span><br><span class="line">    <span class="built_in">print</span>(i)</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看聚集的记录统计</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">collection.find().count()</span><br></pre></td></tr></table></figure>
+
+<p><strong>聚集查询结果排序</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">collection.find().sort(<span class="string">&#x27;name&#x27;</span>, pymongo.ASCENDING) <span class="comment"># 升序</span></span><br><span class="line">collection.find().sort(<span class="string">&#x27;name&#x27;</span>, pymongo.DESCENDING) <span class="comment"># 降序</span></span><br><span class="line">collection.find().sort([(<span class="string">&quot;name&quot;</span>,pymongo.ASCENDING),(<span class="string">&quot;age&quot;</span>,pymongo.DESCENDING)]) <span class="comment"># 多列排序</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>添加记录</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 增加一条数据</span></span><br><span class="line">collection.insert_one(&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;xxx&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;)</span><br><span class="line"></span><br><span class="line">data = [&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&#x27;test%s&#x27;</span> % i, <span class="string">&#x27;age&#x27;</span>: i&#125; <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]  <span class="comment"># 批量插入多条数据</span></span><br><span class="line">res = collection.insert_many(data, ordered=<span class="literal">False</span>)</span><br><span class="line"><span class="built_in">print</span>(res.inserted_ids)</span><br></pre></td></tr></table></figure>
+
+<p><strong>修改记录</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">collection.update_one(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;lxx&quot;</span>&#125;, &#123;<span class="string">&quot;$set&quot;</span>:&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;lll&quot;</span>,<span class="string">&quot;age&quot;</span>:<span class="string">&quot;11&quot;</span>&#125;&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>删除记录</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除一条数据</span></span><br><span class="line">collection.delete_one(&#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;lll&#x27;</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除全部数据</span></span><br><span class="line">ret = collection.delete_many(&#123;&#125;)</span><br><span class="line"><span class="built_in">print</span>(ret.deleted_count, <span class="string">&#x27;个数据已删除&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="mongodb-sql简单使用"><a href="#mongodb-sql简单使用" class="headerlink" title="mongodb sql简单使用"></a>mongodb sql简单使用</h4><p><img src="/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210811224656467.png" alt="linux部署mongodb"></p>
+<p><img src="/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210811230220996.png" alt="linux部署mongodb"></p>
+<h4 id="单机部署mongodb集群"><a href="#单机部署mongodb集群" class="headerlink" title="单机部署mongodb集群"></a>单机部署mongodb集群</h4><ul>
+<li>把原有的mongodb安装目录复制到/usr/local/bin/</li>
+</ul>
+<p><strong>master.conf配置文件（主）</strong></p>
+<ul>
+<li>配置文件放在/usr/local/bin/mongodb/etc/ 目录下</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> master.conf</span></span><br><span class="line">dbpath=/usr/local/bin/mongodb/data/master</span><br><span class="line">logpath=/usr/local/bin/mongodb/log/master.log</span><br><span class="line">pidfilepath=/usr/local/bin/mongodb/master.pid</span><br><span class="line">directoryperdb=true</span><br><span class="line">logappend=true</span><br><span class="line">replSet=testrs</span><br><span class="line">bind_ip=192.168.17.210</span><br><span class="line">port=27017</span><br><span class="line">oplogSize=10000</span><br><span class="line">fork=true</span><br><span class="line">noprealloc=true</span><br></pre></td></tr></table></figure>
+
+<p><strong>slaver.conf配置文件（副本）</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> slaver.conf</span></span><br><span class="line">dbpath=/usr/local/bin/mongodb/data/slaver</span><br><span class="line">logpath=/usr/local/bin/mongodb/log/slaver.log</span><br><span class="line">pidfilepath=/usr/local/bin/mongodb/slaver.pid</span><br><span class="line">directoryperdb=true</span><br><span class="line">logappend=true</span><br><span class="line">replSet=testrs</span><br><span class="line">bind_ip=192.168.17.210</span><br><span class="line">port=27018</span><br><span class="line">oplogSize=10000</span><br><span class="line">fork=true</span><br><span class="line">noprealloc=true</span><br></pre></td></tr></table></figure>
+
+<p><strong>arbiter.conf配置文件（仲裁）</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> arbiter.conf</span></span><br><span class="line">dbpath=/usr/local/bin/mongodb/data/arbiter</span><br><span class="line">logpath=/usr/local/bin/mongodb/log/arbiter.log</span><br><span class="line">pidfilepath=/usr/local/bin/mongodb/arbiter.pid</span><br><span class="line">directoryperdb=true</span><br><span class="line">logappend=true</span><br><span class="line">replSet=testrs</span><br><span class="line">bind_ip=192.168.17.210</span><br><span class="line">port=27019</span><br><span class="line">oplogSize=10000</span><br><span class="line">fork=true</span><br><span class="line">noprealloc=true</span><br></pre></td></tr></table></figure>
+
+<p><strong>启动mongodb</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> cd /usr/local/bin/mongodb/bin</span><br><span class="line">./mongod --config /usr/local/bin/mongodb/etc/master.conf </span><br><span class="line">./mongod --config /usr/local/bin/mongodb/etc/slaver.conf </span><br><span class="line">./mongod --config /usr/local/bin/mongodb/etc/arbiter.conf</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 连接服务</span></span><br><span class="line">./mongo 192.168.17.210:27017</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>配置主备仲裁节点</strong></p>
+<p><img src="/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210812134215452.png" alt="linux部署mongodb"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cfg=&#123;</span><br><span class="line">   _id:&#x27;testrs&#x27;,</span><br><span class="line">   members:[</span><br><span class="line">       &#123;_id:0,host:&#x27;192.168.17.210:27017&#x27;&#125;,</span><br><span class="line">     &#123;_id:1,host:&#x27;192.168.17.210:27018&#x27;&#125;,</span><br><span class="line">        &#123;_id:2,host:&#x27;192.168.17.210:27019&#x27;,arbiterOnly:true&#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line">rs.initiate(cfg)</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看集群信息rs.status()</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line">testrs:SECONDARY&gt; rs.status()</span><br><span class="line">&#123;</span><br><span class="line">	&quot;set&quot; : &quot;testrs&quot;,</span><br><span class="line">	&quot;date&quot; : ISODate(&quot;2021-08-12T05:43:39.110Z&quot;),</span><br><span class="line">	&quot;myState&quot; : 1,</span><br><span class="line">	&quot;term&quot; : NumberLong(1),</span><br><span class="line">	&quot;syncingTo&quot; : &quot;&quot;,</span><br><span class="line">	&quot;syncSourceHost&quot; : &quot;&quot;,</span><br><span class="line">	&quot;syncSourceId&quot; : -1,</span><br><span class="line">	&quot;heartbeatIntervalMillis&quot; : NumberLong(2000),</span><br><span class="line">	&quot;optimes&quot; : &#123;</span><br><span class="line">		&quot;lastCommittedOpTime&quot; : &#123;</span><br><span class="line">			&quot;ts&quot; : Timestamp(1628747015, 1),</span><br><span class="line">			&quot;t&quot; : NumberLong(1)</span><br><span class="line">		&#125;,</span><br><span class="line">		&quot;readConcernMajorityOpTime&quot; : &#123;</span><br><span class="line">			&quot;ts&quot; : Timestamp(1628747015, 1),</span><br><span class="line">			&quot;t&quot; : NumberLong(1)</span><br><span class="line">		&#125;,</span><br><span class="line">		&quot;appliedOpTime&quot; : &#123;</span><br><span class="line">			&quot;ts&quot; : Timestamp(1628747015, 1),</span><br><span class="line">			&quot;t&quot; : NumberLong(1)</span><br><span class="line">		&#125;,</span><br><span class="line">		&quot;durableOpTime&quot; : &#123;</span><br><span class="line">			&quot;ts&quot; : Timestamp(1628747015, 1),</span><br><span class="line">			&quot;t&quot; : NumberLong(1)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,</span><br><span class="line">	&quot;lastStableCheckpointTimestamp&quot; : Timestamp(1628747005, 1),</span><br><span class="line">	&quot;members&quot; : [</span><br><span class="line">		&#123;</span><br><span class="line">			&quot;_id&quot; : 0,</span><br><span class="line">			&quot;name&quot; : &quot;192.168.17.210:27017&quot;,</span><br><span class="line">			&quot;health&quot; : 1,</span><br><span class="line">			&quot;state&quot; : 1,</span><br><span class="line">			&quot;stateStr&quot; : &quot;PRIMARY&quot;,</span><br><span class="line">			&quot;uptime&quot; : 7702,</span><br><span class="line">			&quot;optime&quot; : &#123;</span><br><span class="line">				&quot;ts&quot; : Timestamp(1628747015, 1),</span><br><span class="line">				&quot;t&quot; : NumberLong(1)</span><br><span class="line">			&#125;,</span><br><span class="line">			&quot;optimeDate&quot; : ISODate(&quot;2021-08-12T05:43:35Z&quot;),</span><br><span class="line">			&quot;syncingTo&quot; : &quot;&quot;,</span><br><span class="line">			&quot;syncSourceHost&quot; : &quot;&quot;,</span><br><span class="line">			&quot;syncSourceId&quot; : -1,</span><br><span class="line">			&quot;infoMessage&quot; : &quot;&quot;,</span><br><span class="line">			&quot;electionTime&quot; : Timestamp(1628746884, 1),</span><br><span class="line">			&quot;electionDate&quot; : ISODate(&quot;2021-08-12T05:41:24Z&quot;),</span><br><span class="line">			&quot;configVersion&quot; : 1,</span><br><span class="line">			&quot;self&quot; : true,</span><br><span class="line">			&quot;lastHeartbeatMessage&quot; : &quot;&quot;</span><br><span class="line">		&#125;,</span><br><span class="line">		&#123;</span><br><span class="line">			&quot;_id&quot; : 1,</span><br><span class="line">			&quot;name&quot; : &quot;192.168.17.210:27018&quot;,</span><br><span class="line">			&quot;health&quot; : 1,</span><br><span class="line">			&quot;state&quot; : 2,</span><br><span class="line">			&quot;stateStr&quot; : &quot;SECONDARY&quot;,</span><br><span class="line">			&quot;uptime&quot; : 145,</span><br><span class="line">			&quot;optime&quot; : &#123;</span><br><span class="line">				&quot;ts&quot; : Timestamp(1628747015, 1),</span><br><span class="line">				&quot;t&quot; : NumberLong(1)</span><br><span class="line">			&#125;,</span><br><span class="line">			&quot;optimeDurable&quot; : &#123;</span><br><span class="line">				&quot;ts&quot; : Timestamp(1628747015, 1),</span><br><span class="line">				&quot;t&quot; : NumberLong(1)</span><br><span class="line">			&#125;,</span><br><span class="line">			&quot;optimeDate&quot; : ISODate(&quot;2021-08-12T05:43:35Z&quot;),</span><br><span class="line">			&quot;optimeDurableDate&quot; : ISODate(&quot;2021-08-12T05:43:35Z&quot;),</span><br><span class="line">			&quot;lastHeartbeat&quot; : ISODate(&quot;2021-08-12T05:43:38.275Z&quot;),</span><br><span class="line">			&quot;lastHeartbeatRecv&quot; : ISODate(&quot;2021-08-12T05:43:38.477Z&quot;),</span><br><span class="line">			&quot;pingMs&quot; : NumberLong(0),</span><br><span class="line">			&quot;lastHeartbeatMessage&quot; : &quot;&quot;,</span><br><span class="line">			&quot;syncingTo&quot; : &quot;192.168.17.210:27017&quot;,</span><br><span class="line">			&quot;syncSourceHost&quot; : &quot;192.168.17.210:27017&quot;,</span><br><span class="line">			&quot;syncSourceId&quot; : 0,</span><br><span class="line">			&quot;infoMessage&quot; : &quot;&quot;,</span><br><span class="line">			&quot;configVersion&quot; : 1</span><br><span class="line">		&#125;,</span><br><span class="line">		&#123;</span><br><span class="line">			&quot;_id&quot; : 2,</span><br><span class="line">			&quot;name&quot; : &quot;192.168.17.210:27019&quot;,</span><br><span class="line">			&quot;health&quot; : 1,</span><br><span class="line">			&quot;state&quot; : 7,</span><br><span class="line">			&quot;stateStr&quot; : &quot;ARBITER&quot;,</span><br><span class="line">			&quot;uptime&quot; : 145,</span><br><span class="line">			&quot;lastHeartbeat&quot; : ISODate(&quot;2021-08-12T05:43:38.275Z&quot;),</span><br><span class="line">			&quot;lastHeartbeatRecv&quot; : ISODate(&quot;2021-08-12T05:43:37.388Z&quot;),</span><br><span class="line">			&quot;pingMs&quot; : NumberLong(0),</span><br><span class="line">			&quot;lastHeartbeatMessage&quot; : &quot;&quot;,</span><br><span class="line">			&quot;syncingTo&quot; : &quot;&quot;,</span><br><span class="line">			&quot;syncSourceHost&quot; : &quot;&quot;,</span><br><span class="line">			&quot;syncSourceId&quot; : -1,</span><br><span class="line">			&quot;infoMessage&quot; : &quot;&quot;,</span><br><span class="line">			&quot;configVersion&quot; : 1</span><br><span class="line">		&#125;</span><br><span class="line">	],</span><br><span class="line">	&quot;ok&quot; : 1,</span><br><span class="line">	&quot;operationTime&quot; : Timestamp(1628747015, 1),</span><br><span class="line">	&quot;$clusterTime&quot; : &#123;</span><br><span class="line">		&quot;clusterTime&quot; : Timestamp(1628747015, 1),</span><br><span class="line">		&quot;signature&quot; : &#123;</span><br><span class="line">			&quot;hash&quot; : BinData(0,&quot;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&quot;),</span><br><span class="line">			&quot;keyId&quot; : NumberLong(0)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">testrs:PRIMARY&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>主节点新增记录</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">testrs:PRIMARY&gt; show dbs</span><br><span class="line">admin   0.000GB</span><br><span class="line">config  0.000GB</span><br><span class="line">local   0.000GB</span><br><span class="line"></span><br><span class="line">db.mydb.test.insert(&#123;&#x27;name&#x27;:&#x27;lxx&#x27;,&#x27;age&#x27;:18&#125;)</span><br><span class="line"></span><br><span class="line">db.mydb.test.find(&#123;&#125;)</span><br><span class="line"></span><br><span class="line">&#123; &quot;_id&quot; : ObjectId(&quot;6114baf5c6cc6f16d0db38a1&quot;), &quot;name&quot; : &quot;lxx&quot;, &quot;age&quot; : 18 &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>副节点查看</strong></p>
+<ul>
+<li>当前不能读取集合的数据，当前节点只是一个备份，无非读取数据，需要为其设置</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">./mongo 192.168.17.210:27018 # 登录副节点</span><br><span class="line"></span><br><span class="line">testrs:SECONDARY&gt; show dbs  # 查看不到数据库</span><br><span class="line">2021-08-12T14:11:30.161+0800 E QUERY    [js] Error: listDatabases failed:&#123;</span><br><span class="line">	&quot;operationTime&quot; : Timestamp(1628748686, 1),</span><br><span class="line">	&quot;ok&quot; : 0,</span><br><span class="line">	&quot;errmsg&quot; : &quot;not master and slaveOk=false&quot;,</span><br><span class="line">	&quot;code&quot; : 13435,</span><br><span class="line">	&quot;codeName&quot; : &quot;NotMasterNoSlaveOk&quot;,</span><br><span class="line">	&quot;$clusterTime&quot; : &#123;</span><br><span class="line">		&quot;clusterTime&quot; : Timestamp(1628748686, 1),</span><br><span class="line">		&quot;signature&quot; : &#123;</span><br><span class="line">			&quot;hash&quot; : BinData(0,&quot;AAAAAAAAAAAAAAAAAAAAAAAAAAA=&quot;),</span><br><span class="line">			&quot;keyId&quot; : NumberLong(0)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125; :</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>设置读取操作</strong></p>
+<ul>
+<li>设置为奴隶节点，允许在从节点上进行读取操作</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">rs.secondaryOk() </span><br><span class="line">或</span><br><span class="line">rs.secondaryOk(true)</span><br><span class="line">rs.secondaryOk(false) # 取消读权限 </span><br><span class="line"><span class="meta">#</span><span class="bash"> 可以查看到数据</span></span><br><span class="line">testrs:SECONDARY&gt; rs.slaveOk()</span><br><span class="line">testrs:SECONDARY&gt; show dbs</span><br><span class="line">admin   0.000GB</span><br><span class="line">config  0.000GB</span><br><span class="line">local   0.000GB</span><br><span class="line">test    0.000GB</span><br><span class="line">testrs:SECONDARY&gt; db.mydb.test.find(&#123;&#125;)</span><br><span class="line">&#123; &quot;_id&quot; : ObjectId(&quot;6114baf5c6cc6f16d0db38a1&quot;), &quot;name&quot; : &quot;lhj&quot;, &quot;age&quot; : 18  </span><br></pre></td></tr></table></figure>
+
+<p><strong>仲裁节点</strong></p>
+<ul>
+<li>不存放任何业务数据，可以登录查看</li>
+<li>只能查看local数据库</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">./mongo 192.168.17.210:27019</span><br><span class="line">rs.slaveOk() </span><br><span class="line"></span><br><span class="line">testrs:ARBITER&gt; show dbs</span><br><span class="line">2021-08-12T14:31:52.134+0800 E QUERY    [js] Error: listDatabases failed:&#123;</span><br><span class="line">	&quot;ok&quot; : 0,</span><br><span class="line">	&quot;errmsg&quot; : &quot;not master and slaveOk=false&quot;,</span><br><span class="line">	&quot;code&quot; : 13435,</span><br><span class="line">	&quot;codeName&quot; : &quot;NotMasterNoSlaveOk&quot;</span><br><span class="line">&#125; :</span><br><span class="line">_getErrorWithCode@src/mongo/shell/utils.js:25:13</span><br><span class="line">Mongo.prototype.getDBs@src/mongo/shell/mongo.js:139:1</span><br><span class="line">shellHelper.show@src/mongo/shell/utils.js:882:13</span><br><span class="line">shellHelper@src/mongo/shell/utils.js:766:15</span><br><span class="line">@(shellhelp2):1:1</span><br><span class="line">testrs:ARBITER&gt; rs.secondaryOk() </span><br><span class="line">testrs:ARBITER&gt; show dbs</span><br><span class="line">local  0.000GB</span><br><span class="line">testrs:ARBITER&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="多台虚拟机搭建集群"><a href="#多台虚拟机搭建集群" class="headerlink" title="多台虚拟机搭建集群"></a>多台虚拟机搭建集群</h4><p><strong>安装mongodb环境</strong></p>
+<ul>
+<li>三台虚拟机一样的操作</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">yum install lrzsz -y</span><br><span class="line">tar -xvf mongodb-linux-x86_64-4.1.3.tgz</span><br><span class="line">mv mongodb-linux-x86_64-4.0.13 /usr/local/bin/mongodb</span><br><span class="line">cd mongodb/</span><br><span class="line">mkdir -p data/db</span><br><span class="line">mkdir log</span><br><span class="line">mkdir etc</span><br><span class="line">vim ./etc/mongodb.conf</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置文件</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 192.168.17.6 配置文件</span></span><br><span class="line">dbpath=/usr/local/bin/mongodb/data/db  #数据文件存放目录       </span><br><span class="line">logpath=/usr/local/bin/mongodb/log/mongodb.log   #日志文件</span><br><span class="line">logappend=true  #错误日志采用追加模式</span><br><span class="line">port=27017   #端口</span><br><span class="line">fork=true    #以守护程序的方式启用，即在后台运行</span><br><span class="line">journal=true  #启用日志文件，默认启用</span><br><span class="line">quiet=true  #这个选项可以过滤掉一些无用的日志信息，若需要调试使用请设置为false</span><br><span class="line"><span class="meta">#</span><span class="bash">auth=<span class="literal">true</span> <span class="comment">#需要认证。如果放开注释，就必须创建MongoDB的账号，使用账号与密码才可远程访问，第一次安装建议注释</span></span></span><br><span class="line">bind_ip=0.0.0.0 #允许远程访问，或者直接注释，127.0.0.1是只允许本地访问 </span><br><span class="line">replSet=testrs # 集群名称</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 192.168.17.7配置文件</span></span><br><span class="line">dbpath=/usr/local/bin/mongodb/data/db  #数据文件存放目录</span><br><span class="line">logpath=/usr/local/bin/mongodb/log/mongodb.log   #日志文件</span><br><span class="line">logappend=true  #错误日志采用追加模式</span><br><span class="line">port=27017   #端口</span><br><span class="line">fork=true    #以守护程序的方式启用，即在后台运行</span><br><span class="line">journal=true  #启用日志文件，默认启用</span><br><span class="line">quiet=true  #这个选项可以过滤掉一些无用的日志信息，若需要调试使用请设置为false</span><br><span class="line"><span class="meta">#</span><span class="bash">auth=<span class="literal">true</span> <span class="comment">#需要认证。如果放开注释，就必须创建MongoDB的账号，使用账号与密码才可远程访问，第一次安装建议注释</span></span></span><br><span class="line">bind_ip=0.0.0.0 #允许远程访问，或者直接注释，127.0.0.1是只允许本地访问</span><br><span class="line">replSet=testrs  #集群名称</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 192.168.17.210配置文件</span></span><br><span class="line">dbpath=/usr/local/bin/mongodb/data/db  #数据文件存放目录</span><br><span class="line">logpath=/usr/local/bin/mongodb/log/mongodb.log   #日志文件</span><br><span class="line">logappend=true  #错误日志采用追加模式</span><br><span class="line">port=27017   #端口</span><br><span class="line">fork=true    #以守护程序的方式启用，即在后台运行</span><br><span class="line">journal=true  #启用日志文件，默认启用</span><br><span class="line">quiet=true  #这个选项可以过滤掉一些无用的日志信息，若需要调试使用请设置为false</span><br><span class="line"><span class="meta">#</span><span class="bash">auth=<span class="literal">true</span> <span class="comment">#需要认证。如果放开注释，就必须创建MongoDB的账号，使用账号与密码才可远程访问，第一次安装建议注释</span></span></span><br><span class="line">bind_ip=0.0.0.0 #允许远程访问，或者直接注释，127.0.0.1是只允许本地访问</span><br><span class="line">replSet=testrs  #集群名称</span><br></pre></td></tr></table></figure>
+
+<p><strong>启动服务</strong></p>
+<ul>
+<li>分别启动三台虚拟机mongodb服务</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">./mongod --config ../etc/mongodb.conf</span><br><span class="line"></span><br><span class="line">yum -y install net-tools</span><br><span class="line">netstat -lanp |grep &#x27;27017&#x27;</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 安装完之后可以使用killall 命令 快速关闭多个进程</span></span><br><span class="line">yum install -y psmisc</span><br><span class="line">killall mongod</span><br><span class="line">killall mongos</span><br></pre></td></tr></table></figure>
+
+<p><strong>添加集群</strong></p>
+<ul>
+<li><p>注意：必须使用admin操作</p>
+</li>
+<li><p>对于仲裁点一定要加上arbiterOnly:true，否则主备模式不生效</p>
+</li>
+<li><p><img src="/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20210812164615833.png" alt="linux部署mongodb"></p>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost bin]# ./mongo</span><br><span class="line">MongoDB shell version v4.0.13 </span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> use admin</span></span><br><span class="line">switched to db admin</span><br><span class="line"></span><br><span class="line">cfg =&#123;&quot;_id&quot;:&quot;testrs&quot;,</span><br><span class="line">&quot;members&quot;:[</span><br><span class="line">&#123;&quot;_id&quot;:1,&quot;host&quot;:&quot;192.168.17.6:27017&quot;,priority:2&#125;,</span><br><span class="line">&#123;&quot;_id&quot;:2,&quot;host&quot;:&quot;192.168.17.7:27017&quot;,priority:1&#125;,</span><br><span class="line">&#123;&quot;_id&quot;:3,&quot;host&quot;:&quot;192.168.17.210:27017&quot;,arbiterOnly:true&#125;]</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">rs.initiate(cfg)</span><br><span class="line"></span><br><span class="line">db.printSlaveReplicationInfo() # 查看副本同步状态</span><br></pre></td></tr></table></figure>
+
+<p><strong>测试数据</strong></p>
+<ul>
+<li>主</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">testrs:PRIMARY&gt; db.cluster.test.insert(&#123;&#x27;name&#x27;:&#x27;cluster&#x27;&#125;)</span><br><span class="line">WriteResult(&#123; &quot;nInserted&quot; : 1 &#125;)</span><br><span class="line">testrs:PRIMARY&gt; db.cluster.test.find()</span><br><span class="line">&#123; &quot;_id&quot; : ObjectId(&quot;611552a1bc61b02ccd503f79&quot;), &quot;name&quot; : &quot;cluster&quot; &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>从</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">./mongo </span><br><span class="line">rs.secondaryOk() # 添加为从，成功后可以有读权限</span><br><span class="line">testrs:SECONDARY&gt; db.cluster.test.find()</span><br><span class="line">&#123; &quot;_id&quot; : ObjectId(&quot;611552a1bc61b02ccd503f79&quot;), &quot;name&quot; : &quot;cluster&quot; &#125;</span><br><span class="line">&#123; &quot;_id&quot; : ObjectId(&quot;611553dfbc61b02ccd503f7a&quot;), &quot;name&quot; : &quot;test&quot; &#125;</span><br><span class="line">&#123; &quot;_id&quot; : ObjectId(&quot;61155f70bc61b02ccd503f7b&quot;), &quot;name&quot; : &quot;xxx&quot; &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>测试主从</strong></p>
+<ul>
+<li>关闭主服务</li>
+<li>从变成主</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./mongod -f ../etc/mongodb.conf --shutdown # 关闭服务</span><br><span class="line">testrs:SECONDARY&gt; rs.status()  # 查看主从节点状态</span><br></pre></td></tr></table></figure>
+
+<p><strong>从库永久设置rs.slaveOk</strong></p>
+<ul>
+<li>重新连接服务，查询会发现从库没有权限读取。需要永久设置rs.slaveOk</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo find / -name .mongorc.js</span><br><span class="line">/root/.mongorc.js # 查询到的路径</span><br><span class="line">vim /root/.mongorc.js</span><br><span class="line">rs.secondaryOk()  # 增加命令保存</span><br><span class="line">./mongo # 重新启动服务</span><br><span class="line">show dbs # 可以查到数据库</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改主从优先级"><a href="#修改主从优先级" class="headerlink" title="修改主从优先级"></a><strong>修改主从优先级</strong></h4><ul>
+<li><a target="_blank" rel="noopener" href="https://www.mongodb.com/docs/manual/tutorial/change-hostnames-in-a-replica-set/">https://www.mongodb.com/docs/manual/tutorial/change-hostnames-in-a-replica-set/</a></li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">在主节点运行如下命令：</span><br><span class="line"><span class="meta">1)PRIMARY&gt;</span><span class="bash"> rscfg=rs.conf()</span></span><br><span class="line"><span class="meta">2)PRIMARY&gt;</span><span class="bash">rscfg.members[0].priority = 3</span></span><br><span class="line"><span class="meta">3)PRIMARY&gt;</span><span class="bash"> rs.reconfig(rscfg)</span></span><br><span class="line"></span><br><span class="line">修改集群ip</span><br><span class="line">cfg = rs.conf()</span><br><span class="line">cfg.members[1].host = &quot;10.143.16.xx:27017&quot;</span><br><span class="line">rs.reconfig(cfg)</span><br><span class="line"></span><br><span class="line">cfg = rs.conf()</span><br><span class="line">cfg.members[2].host = &quot;10.143.16.xx:27017&quot;</span><br><span class="line">rs.reconfig(cfg)</span><br><span class="line"></span><br><span class="line">初始化集群</span><br><span class="line">rs0:PRIMARY&gt; cfg = &#123;</span><br><span class="line">...  _id: &quot;rs0&quot;,</span><br><span class="line">...  members: [</span><br><span class="line">...    &#123;_id: 0, host: &quot;mongodb-v1-0.mongodb.airport-ai.svc.cluster.local&quot;,priority:5&#125;,</span><br><span class="line">...    &#123;_id: 1, host: &quot;mongodb-v1-1.mongodb.airport-ai.svc.cluster.local&quot;,priority:3&#125;,</span><br><span class="line">... ]</span><br><span class="line">... &#125;</span><br><span class="line"></span><br><span class="line">rs0:PRIMARY&gt; rs.reconfig(cfg)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>pymongo测试连接</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pymongo <span class="keyword">import</span> MongoClient, ReadPreference</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">client = MongoClient(<span class="string">&#x27;x.x.x.x:27017&#x27;</span>, replicaSet=<span class="string">&#x27;google&#x27;</span>)  <span class="comment"># 连接副本集</span></span><br><span class="line"><span class="comment"># client = MongoClient(&#x27;mongodb://x.x.x.x, x.x.x.x, x.x.x.x, x.x.x.x&#x27;, replicaSet=&#x27;google&#x27;)  # 连接副本集</span></span><br><span class="line">db = client.get_database(<span class="string">&#x27;tes&#x27;</span>, read_preference=ReadPreference.SECONDARY)  <span class="comment"># 手动切换到SECONDARY备份的数据库</span></span><br><span class="line">collection = db.student  <span class="comment"># db下的student集合</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># print(client.address)</span></span><br><span class="line"><span class="comment"># print(client.list_database_names())</span></span><br><span class="line"><span class="comment"># serverStatus = db.command(&#x27;serverStatus&#x27;)  # 获取mongodb的serverStatus状态信息</span></span><br><span class="line"><span class="comment"># print(serverStatus)</span></span><br><span class="line"><span class="comment"># print(serverStatus[&#x27;connections&#x27;])  # 连接信息</span></span><br><span class="line"><span class="comment"># print(serverStatus[&#x27;network&#x27;])  # 流量信息</span></span><br><span class="line"><span class="comment"># print(serverStatus[&#x27;opcounters&#x27;])  # 增删改查信息</span></span><br><span class="line"><span class="comment"># print(db.read_preference)</span></span><br><span class="line"></span><br><span class="line">collection.insert_one(&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;lxx&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>&#125;)  <span class="comment"># 插入一条数据，如果没出错那么说明连接成功</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># data = [&#123;&quot;name&quot;: &#x27;test%s&#x27; % i, &#x27;age&#x27;: i&#125; for i in range(1, 101)]  # 批量插入数据</span></span><br><span class="line"><span class="comment"># res = collection.insert_many(data, ordered=False)</span></span><br><span class="line"><span class="comment"># print(res.inserted_ids)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># # 删除所有数据</span></span><br><span class="line"><span class="comment"># ret = collection.delete_many(&#123;&#125;)</span></span><br><span class="line"><span class="comment"># print(ret.deleted_count, &#x27;个数据已删除&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># # 下面是遍历查询数据</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> collection.find():</span><br><span class="line">    <span class="built_in">print</span>(i)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="GridFS"><a href="#GridFS" class="headerlink" title="GridFS"></a>GridFS</h4><ul>
+<li>GridFS是mongoDB自带的文件系统他用二进制的形式存储文件，大型文件系统的绝大多是特性GridFS全可以完成。GridFS 用于存储和恢复那些超过16M（BSON文件限制）的文件(如：图片、音频、视频等)</li>
+</ul>
+<p><strong>上传文件</strong></p>
+<ul>
+<li>cmd终端使用mongodb自带的mongofiles</li>
+<li>mongofiles.exe -d  数据库名称 put 文件路径</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">D:\MongoDB\Server\3.4\bin&gt; mongofiles.exe -d gridfs put C:\Users\Desktop\foda\yolov5\weights\yolov5s.pt</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看文件存储状态</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> db.fs.files.find().pretty()</span></span><br><span class="line">&#123;</span><br><span class="line">        &quot;_id&quot; : ObjectId(&quot;611db8b4c729b23d84aaaf9b&quot;),</span><br><span class="line">        &quot;chunkSize&quot; : 261120,</span><br><span class="line">        &quot;uploadDate&quot; : ISODate(&quot;2021-08-19T01:49:40.682Z&quot;),</span><br><span class="line">        &quot;length&quot; : 14796495,</span><br><span class="line">        &quot;md5&quot; : &quot;aa2199af684193e4e93dd14bf2075893&quot;,</span><br><span class="line">        &quot;filename&quot; : &quot;xxxxx&quot;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">db.fs.chunks.find(&#123;files_id:ObjectId(<span class="string">&quot;611db8b4c729b23d84aaaf9b&quot;</span>)&#125;)</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>python上传读取</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> gridfs <span class="keyword">import</span> GridFS</span><br><span class="line"><span class="keyword">from</span> pymongo <span class="keyword">import</span> MongoClient</span><br><span class="line"><span class="keyword">from</span> bson.objectid <span class="keyword">import</span> ObjectId</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MongoGridFS</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    dbUrl = <span class="string">&#x27;127.0.0.1:27017&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, db, collection</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :param db: 数据库名称</span></span><br><span class="line"><span class="string">        :param collection: 集合名称</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        self.db = db</span><br><span class="line">        self.collection = collection</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">connect_db</span>(<span class="params">self</span>):</span></span><br><span class="line">        client = MongoClient(self.dbUrl)</span><br><span class="line">        db = client[self.db]</span><br><span class="line">        <span class="comment"># db.authenticate()</span></span><br><span class="line">        collection = db[self.collection]</span><br><span class="line">        <span class="keyword">return</span> db</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upload_file</span>(<span class="params">self, db, filepath</span>):</span></span><br><span class="line"></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        上传文件</span></span><br><span class="line"><span class="string">        :param filePath:   文件路径</span></span><br><span class="line"><span class="string">        :return:  返回files_id</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        fs = GridFS(db, collection=self.collection)</span><br><span class="line">        filename = filepath.split(<span class="string">&#x27;\\&#x27;</span>)[-<span class="number">1</span>]</span><br><span class="line">        dic = &#123;<span class="string">&#x27;filename&#x27;</span>: filename, <span class="string">&#x27;url&#x27;</span>: filepath&#125;</span><br><span class="line">        <span class="keyword">if</span> fs.find_one(&#123;<span class="string">&#x27;filename&#x27;</span>: filename&#125;):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;模型已存在&#x27;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(filepath, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> fp:</span><br><span class="line">                data = fp.read()</span><br><span class="line">                files_id = fs.put(data=data, **dic)</span><br><span class="line">            <span class="keyword">return</span> files_id</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_id</span>(<span class="params">self, db, filepath</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">         通过filename查询条件获取id</span></span><br><span class="line"><span class="string">        :param filepath: 查询条件</span></span><br><span class="line"><span class="string">        :return: files_id</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            filename = filepath.split(<span class="string">&#x27;\\&#x27;</span>)[-<span class="number">1</span>]</span><br><span class="line">            fs = GridFS(db, collection=self.collection)</span><br><span class="line">            files_id = fs.find_one(&#123;<span class="string">&quot;filename&quot;</span>: filename&#125;)._<span class="built_in">id</span></span><br><span class="line">            <span class="comment"># print(type(files_id))</span></span><br><span class="line">            <span class="keyword">return</span> files_id</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(<span class="built_in">str</span>(e))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">list_file</span>(<span class="params">self,db</span>):</span> <span class="comment">#列出所有文件名</span></span><br><span class="line">        fs = GridFS(db, self.collection)</span><br><span class="line">        gf = fs.<span class="built_in">list</span>()</span><br><span class="line">        <span class="built_in">print</span>(gf)</span><br><span class="line">        <span class="keyword">return</span> gf</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getfile</span>(<span class="params">self, db, _id</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        通过id查询获取数据库中模型</span></span><br><span class="line"><span class="string">        :param _id: 文件id</span></span><br><span class="line"><span class="string">        :return: file：二进制数据</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        fs = GridFS(db, collection=self.collection)</span><br><span class="line">        object_id = ObjectId(_<span class="built_in">id</span>)</span><br><span class="line">        gf = fs.get(object_id)</span><br><span class="line">        file = gf.read()</span><br><span class="line">        <span class="keyword">return</span> file</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download_file</span>(<span class="params">self, db, _id, name</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        通过文件_id获取文件</span></span><br><span class="line"><span class="string">        :param id:  文件id---&gt; files_id</span></span><br><span class="line"><span class="string">        :return: filename</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            fs = GridFS(db, collection=self.collection)</span><br><span class="line">            object_id = ObjectId(_<span class="built_in">id</span>)</span><br><span class="line">            gf = fs.get(object_id)</span><br><span class="line">            file_data = gf.read()</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(<span class="string">&#x27;./img&#x27;</span>):</span><br><span class="line">                os.mkdir(<span class="string">&#x27;./img&#x27;</span>)</span><br><span class="line">            img_path = <span class="string">&#x27;img/&#x27;</span> + name</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(img_path, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> fp:</span><br><span class="line">                fp.write(file_data)</span><br><span class="line">                <span class="built_in">print</span>(gf.filename)</span><br><span class="line">            <span class="keyword">return</span> gf.filename</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(<span class="built_in">str</span>(e))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">remove_file</span>(<span class="params">self, db, _id</span>):</span></span><br><span class="line">        fs = GridFS(db, collection=self.collection)</span><br><span class="line">        fs.delete(_<span class="built_in">id</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">gfs = MongoGridFS(<span class="string">&#x27;fs&#x27;</span>, <span class="string">&#x27;test&#x27;</span>)</span><br><span class="line">db = gfs.connect_db()</span><br></pre></td></tr></table></figure>
+
+<h4 id="Django中使用"><a href="#Django中使用" class="headerlink" title="Django中使用"></a>Django中使用</h4><ul>
+<li><p><a target="_blank" rel="noopener" href="http://docs.mongoengine.org/tutorial.html">http://docs.mongoengine.org/tutorial.html</a></p>
+</li>
+<li><p>pip3 install mongoengine</p>
+</li>
+</ul>
+<p><strong>setting.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">INSTALLED_APPS = [</span><br><span class="line">    <span class="string">&#x27;rest_framework&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;rest_framework_mongoengine&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;django_filters&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;corsheaders&#x27;</span>,</span><br><span class="line">]</span><br><span class="line"><span class="comment"># Custom settings</span></span><br><span class="line">DATETIME_FORMAT = <span class="string">&#x27;%Y-%m-%d %H:%M:%S&#x27;</span></span><br><span class="line">DATE_FORMAT = <span class="string">&#x27;%Y-%m-%d&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Django Rest Framework settings</span></span><br><span class="line">REST_FRAMEWORK = &#123;</span><br><span class="line">    <span class="comment"># Use Django&#x27;s standard `django.contrib.auth` permissions,</span></span><br><span class="line">    <span class="comment"># or allow read-only access for unauthenticated users.</span></span><br><span class="line">    <span class="string">&#x27;DEFAULT_PERMISSION_CLASSES&#x27;</span>: [</span><br><span class="line">        <span class="string">&#x27;rest_framework.permissions.AllowAny&#x27;</span>,</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">&#x27;DEFAULT_AUTHENTICATION_CLASSES&#x27;</span>: [</span><br><span class="line">        <span class="string">&#x27;rest_framework.authentication.BasicAuthentication&#x27;</span>,</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">&#x27;DEFAULT_SCHEMA_CLASS&#x27;</span>: <span class="string">&#x27;drf_spectacular.openapi.AutoSchema&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;DATETIME_FORMAT&#x27;</span>: DATETIME_FORMAT,</span><br><span class="line">    <span class="string">&#x27;DATETIME_INPUT_FORMATS&#x27;</span>: [DATETIME_FORMAT],</span><br><span class="line">    <span class="string">&#x27;DATE_FORMAT&#x27;</span>: DATE_FORMAT,</span><br><span class="line">    <span class="string">&#x27;DATE_INPUT_FORMATS&#x27;</span>: [DATE_FORMAT],</span><br><span class="line">    <span class="string">&#x27;DEFAULT_FILTER_BACKENDS&#x27;</span>: [<span class="string">&#x27;django_filters.rest_framework.DjangoFilterBackend&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;DEFAULT_PAGINATION_CLASS&#x27;</span>: <span class="string">&#x27;rest_framework.pagination.PageNumberPagination&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;PAGE_SIZE&#x27;</span>: <span class="number">10</span>,</span><br><span class="line">    <span class="comment"># &#x27;DEFAULT_RENDERER_CLASSES&#x27;: [&#x27;utils.renderers.MyJSONRender&#x27;],</span></span><br><span class="line">    <span class="string">&#x27;EXCEPTION_HANDLER&#x27;</span>: <span class="string">&#x27;utils.exception_handler.custom_exception_handler&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>models.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> mongoengine</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mongoengine.connect(<span class="string">&quot;model&quot;</span>, host=<span class="string">&quot;10.21.6.14&quot;</span>, port=<span class="number">30707</span>)</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AlgorithmModel</span>(<span class="params">mongoengine.Document</span>):</span></span><br><span class="line">    meta = &#123;</span><br><span class="line">        <span class="string">&quot;collection&quot;</span>: <span class="string">&quot;model&quot;</span>,</span><br><span class="line">        <span class="string">&quot;ordering&quot;</span>: [<span class="string">&#x27;-id&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    BASIC = <span class="string">&#x27;basic&#x27;</span></span><br><span class="line">    CUSTOM = <span class="string">&#x27;custom&#x27;</span></span><br><span class="line">    TYPE_CHOICES = [</span><br><span class="line">        (BASIC, <span class="string">&#x27;基础模型&#x27;</span>),</span><br><span class="line">        (CUSTOM, <span class="string">&#x27;定制化模型&#x27;</span>),</span><br><span class="line">    ]</span><br><span class="line">    MSG_CHOICES = [</span><br><span class="line">        (<span class="string">&quot;used&quot;</span>, <span class="string">&quot;已使用&quot;</span>),</span><br><span class="line">        (<span class="string">&quot;unused&quot;</span>, <span class="string">&quot;未使用&quot;</span>),</span><br><span class="line">    ]</span><br><span class="line">    <span class="built_in">id</span> = mongoengine.SequenceField(required=<span class="literal">True</span>, primary_key=<span class="literal">True</span>)</span><br><span class="line">    name = mongoengine.StringField(max_length=<span class="number">50</span>, unique=<span class="literal">True</span>)</span><br><span class="line">    desc = mongoengine.StringField(max_length=<span class="number">50</span>)</span><br><span class="line">    <span class="built_in">type</span> = mongoengine.StringField(max_length=<span class="number">50</span>, choices=TYPE_CHOICES, default=BASIC)</span><br><span class="line">    model = mongoengine.FileField()</span><br><span class="line">    tag = mongoengine.StringField(choices=MSG_CHOICES, default=<span class="string">&quot;used&quot;</span>)</span><br><span class="line">    uploadDate = mongoengine.DateTimeField()</span><br><span class="line">    </span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AlgorithmSliceModel</span>(<span class="params">mongoengine.Document</span>):</span></span><br><span class="line">    meta = &#123;</span><br><span class="line">        <span class="string">&quot;collection&quot;</span>: <span class="string">&quot;demo&quot;</span>,</span><br><span class="line">        <span class="string">&quot;ordering&quot;</span>: [<span class="string">&#x27;-id&#x27;</span>],</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">id</span> = mongoengine.SequenceField(required=<span class="literal">True</span>, primary_key=<span class="literal">True</span>)</span><br><span class="line">    algorithm = mongoengine.StringField(required=<span class="literal">True</span>)</span><br><span class="line">    filename = mongoengine.StringField(required=<span class="literal">True</span>)</span><br><span class="line">    event_started = mongoengine.DateTimeField(default=datetime.datetime.utcnow)</span><br><span class="line">    event_started_addr = mongoengine.StringField(required=<span class="literal">True</span>)</span><br><span class="line">    event_addr_type = mongoengine.StringField(required=<span class="literal">True</span>)</span><br><span class="line">    event_name = mongoengine.StringField(required=<span class="literal">True</span>, max_length=<span class="number">50</span>)</span><br><span class="line">    slice_video = mongoengine.FileField(required=<span class="literal">True</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>serializer.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> rest_framework_mongoengine <span class="keyword">import</span> serializers</span><br><span class="line"><span class="keyword">from</span> .models <span class="keyword">import</span> AlgorithmModel, AlgorithmSliceModel</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AlgorithmModelSerializer</span>(<span class="params">serializers.DocumentSerializer</span>):</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        model = AlgorithmModel</span><br><span class="line">        fields = <span class="string">&#x27;__all__&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">create</span>(<span class="params">self, validated_data</span>):</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;&gt;&gt;&#x27;</span>, validated_data)</span><br><span class="line">        model_data = validated_data.get(<span class="string">&quot;model&quot;</span>)</span><br><span class="line">        filename = validated_data.get(<span class="string">&quot;name&quot;</span>)</span><br><span class="line">        validated_data.pop(<span class="string">&quot;model&quot;</span>)</span><br><span class="line">        ret = AlgorithmModel(**validated_data, uploadDate=datetime.datetime.utcnow())</span><br><span class="line">        ret.model.put(model_data, **&#123;<span class="string">&quot;filename&quot;</span>: filename&#125;)</span><br><span class="line">        ret.save()</span><br><span class="line">        <span class="keyword">return</span> ret</span><br><span class="line"></span><br><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">AlgorithmSliceModelModelSerializer</span>(<span class="params">serializers.DocumentSerializer</span>):</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Meta</span>:</span></span><br><span class="line">        model = AlgorithmSliceModel</span><br><span class="line">        fields = <span class="string">&#x27;__all__&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">create</span>(<span class="params">self, validated_data</span>):</span></span><br><span class="line">        slice_video = validated_data.get(<span class="string">&quot;slice_video&quot;</span>)</span><br><span class="line">        name = validated_data.get(<span class="string">&quot;filename&quot;</span>)</span><br><span class="line">        validated_data.pop(<span class="string">&quot;slice_video&quot;</span>)</span><br><span class="line">        model = AlgorithmSliceModel(**validated_data)</span><br><span class="line">        model.slice_video.put(slice_video, content_type=<span class="string">&#x27;video/mp4&#x27;</span>, filename=name)</span><br><span class="line">        model.save()</span><br><span class="line">        <span class="keyword">return</span> model</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>views.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> .serializers <span class="keyword">import</span> AlgorithmModelSerializer,AlgorithmSliceModelModelSerializer</span><br><span class="line"><span class="keyword">from</span> .models <span class="keyword">import</span> AlgorithmModel,AlgorithmSliceModel</span><br><span class="line"><span class="keyword">from</span> rest_framework_mongoengine <span class="keyword">import</span> viewsets</span><br><span class="line"><span class="keyword">from</span> rest_framework.decorators <span class="keyword">import</span> action</span><br><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> HttpResponse</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AlgorithmViewSet</span>(<span class="params">viewsets.ModelViewSet</span>):</span></span><br><span class="line">    queryset = AlgorithmModel.objects.<span class="built_in">all</span>()</span><br><span class="line">    serializer_class = AlgorithmModelSerializer</span><br><span class="line">    my_filter_fields = [<span class="string">&#x27;type&#x27;</span>] <span class="comment"># 定义过滤字段type</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_kwargs_for_filtering</span>(<span class="params">self</span>):</span></span><br><span class="line">        filtering_kwargs = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> field <span class="keyword">in</span> self.my_filter_fields:</span><br><span class="line">            field_value = self.request.query_params.get(field)</span><br><span class="line">            <span class="built_in">print</span>(field_value)</span><br><span class="line">            <span class="keyword">if</span> field_value:</span><br><span class="line">                filtering_kwargs[field] = field_value</span><br><span class="line">        <span class="keyword">return</span> filtering_kwargs</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_queryset</span>(<span class="params">self</span>):</span></span><br><span class="line">        queryset = AlgorithmModel.objects.<span class="built_in">all</span>()</span><br><span class="line">        filtering_kwargs = self.get_kwargs_for_filtering()</span><br><span class="line">        <span class="keyword">if</span> filtering_kwargs:</span><br><span class="line">            queryset = AlgorithmModel.objects.<span class="built_in">filter</span>(**filtering_kwargs)</span><br><span class="line">        <span class="keyword">return</span> queryset</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VideoViewSet</span>(<span class="params">viewsets.ModelViewSet</span>):</span></span><br><span class="line">    queryset = AlgorithmSliceModel.objects</span><br><span class="line">    serializer_class = VideoSerializer</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_kwargs_for_filtering</span>(<span class="params">self</span>):</span></span><br><span class="line">        filtering_kwargs = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> field <span class="keyword">in</span> self.my_filter_fields:</span><br><span class="line">            field_value = self.request.query_params.get(field)</span><br><span class="line">            <span class="keyword">if</span> field_value:</span><br><span class="line">                filtering_kwargs[field] = field_value</span><br><span class="line">        <span class="keyword">return</span> filtering_kwargs</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_queryset</span>(<span class="params">self</span>):</span></span><br><span class="line">        queryset = AlgorithmSliceModel.objects.<span class="built_in">all</span>()</span><br><span class="line">        filtering_kwargs = self.get_kwargs_for_filtering()</span><br><span class="line">        <span class="keyword">if</span> filtering_kwargs:</span><br><span class="line">            queryset = AlgorithmSliceModel.objects.<span class="built_in">filter</span>(**filtering_kwargs)</span><br><span class="line">        <span class="keyword">return</span> queryset</span><br><span class="line"></span><br><span class="line">    <span class="comment"># def get_kwargs_for_filtering(self):</span></span><br><span class="line">    <span class="comment">#     self.algorithm = self.request.query_params.get(&quot;algorithm&quot;)</span></span><br><span class="line">    <span class="comment">#     self.start_time = self.request.query_params.get(&quot;start_time&quot;)</span></span><br><span class="line">    <span class="comment">#     self.end_time = self.request.query_params.get(&quot;end_time&quot;)</span></span><br><span class="line">    <span class="comment">#     self.event_name = self.request.query_params.get(&quot;event_name&quot;)</span></span><br><span class="line">    <span class="comment">#     if self.algorithm and self.start_time and self.end_time and self.event_name:</span></span><br><span class="line">    <span class="comment">#         return True</span></span><br><span class="line">    <span class="comment">#     return False</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># def get_queryset(self):</span></span><br><span class="line">    <span class="comment">#     queryset = AlgorithmSliceModel.objects.all()</span></span><br><span class="line">    <span class="comment">#     filtering = self.get_kwargs_for_filtering()</span></span><br><span class="line">    <span class="comment">#     if filtering:</span></span><br><span class="line">    <span class="comment">#         queryset = AlgorithmSliceModel.objects.filter(event_started__gte=self.start_time,</span></span><br><span class="line">    <span class="comment">#                                                       event_started__lte=self.end_time,</span></span><br><span class="line">    <span class="comment">#                                                       algorithm=self.algorithm, event_name=self.event_name)</span></span><br><span class="line">    <span class="comment">#     return queryset</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @action(<span class="params">methods=[<span class="string">&#x27;GET&#x27;</span>], detail=<span class="literal">True</span></span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">download</span>(<span class="params">self, request, *args, **kwargs</span>):</span></span><br><span class="line">        video = self.get_object()</span><br><span class="line">        file = video.slice_video.read()</span><br><span class="line">        <span class="keyword">return</span> HttpResponse(file, content_type=<span class="string">&#x27;video/mp4&#x27;</span>)</span><br><span class="line">  </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="http://127.0.0.1:8000/api/algorithm/?type=custom">http://127.0.0.1:8000/api/algorithm/?type=custom</a></li>
+</ul>
+<img src="/2021/08/09/Linux%E9%83%A8%E7%BD%B2mongodb/image-20220117163017436.png" alt="Linux部署mongodb" style="zoom:150%;">
+    </div>
+
+    
+    
+    
+	  
+	  
+		   <div>
+			 <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:20px;">-------------End-------------</div>
+    
+</div>
+		   </div>
+	   
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mongodb/" rel="tag"># mongodb</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/07/31/Nginx/" rel="prev" title="Nginx">
+      <i class="fa fa-chevron-left"></i> Nginx
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/08/10/redis/" rel="next" title="redis">
+      redis <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E5%8C%85"><span class="nav-number">1.</span> <span class="nav-text">下载安装包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%8E%8B"><span class="nav-number">2.</span> <span class="nav-text">解压</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%9B%AE%E5%BD%95"><span class="nav-number">3.</span> <span class="nav-text">创建目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8MongoDB"><span class="nav-number">4.</span> <span class="nav-text">启动MongoDB</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAMongoDB%E8%B4%A6%E5%8F%B7"><span class="nav-number">5.</span> <span class="nav-text">创建MongoDB账号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99%E7%AB%AF%E5%8F%A3%E5%BC%80%E6%94%BE"><span class="nav-number">6.</span> <span class="nav-text">防火墙端口开放</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E9%85%8D%E7%BD%AEMongoDB%E6%9C%8D%E5%8A%A1"><span class="nav-number">7.</span> <span class="nav-text">本地配置MongoDB服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%9C%AC%E5%9C%B0%E8%BF%9E%E6%8E%A5"><span class="nav-number">8.</span> <span class="nav-text">测试本地连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#python%E8%BF%9E%E6%8E%A5"><span class="nav-number">9.</span> <span class="nav-text">python连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pymongo%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8"><span class="nav-number">10.</span> <span class="nav-text">pymongo简单使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mongodb-sql%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8"><span class="nav-number">11.</span> <span class="nav-text">mongodb sql简单使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E9%83%A8%E7%BD%B2mongodb%E9%9B%86%E7%BE%A4"><span class="nav-number">12.</span> <span class="nav-text">单机部署mongodb集群</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%8F%B0%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%90%AD%E5%BB%BA%E9%9B%86%E7%BE%A4"><span class="nav-number">13.</span> <span class="nav-text">多台虚拟机搭建集群</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E4%B8%BB%E4%BB%8E%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">14.</span> <span class="nav-text">修改主从优先级</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GridFS"><span class="nav-number">15.</span> <span class="nav-text">GridFS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Django%E4%B8%AD%E4%BD%BF%E7%94%A8"><span class="nav-number">16.</span> <span class="nav-text">Django中使用</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Admin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Admin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-07 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Admin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共151.4k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

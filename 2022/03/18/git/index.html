@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="常用命令1234567891011121314151617181920212223242526272829303132333435363738394041424344451.在仓库目录终端下 - 设置全局用户&gt;: git config --global user.name &amp;#x27;lxx&amp;#x27;&gt;: git config --global user.email &amp;#x27;lx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git">
+<meta property="og:url" content="http://example.com/2022/03/18/git/index.html">
+<meta property="og:site_name" content="Admin">
+<meta property="og:description" content="常用命令1234567891011121314151617181920212223242526272829303132333435363738394041424344451.在仓库目录终端下 - 设置全局用户&gt;: git config --global user.name &amp;#x27;lxx&amp;#x27;&gt;: git config --global user.email &amp;#x27;lx">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-18T02:49:10.000Z">
+<meta property="article:modified_time" content="2022-03-18T05:20:34.679Z">
+<meta property="article:author" content="Admin">
+<meta property="article:tag" content="git">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2022/03/18/git/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>git | Admin</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Admin" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Admin</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/18/git/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Admin">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Admin">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          git
+        </h1>
+
+        <div class="post-meta">
+		<!-- 设置置顶标志 -->
+			
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-18 10:49:10 / 修改时间：13:20:34" itemprop="dateCreated datePublished" datetime="2022-03-18T10:49:10+08:00">2022-03-18</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>在仓库目录终端下 - 设置全局用户</span><br><span class="line">&gt;: git config --<span class="keyword">global</span> user.name <span class="string">&#x27;lxx&#x27;</span></span><br><span class="line">&gt;: git config --<span class="keyword">global</span> user.email <span class="string">&#x27;lxx@qq.com&#x27;</span></span><br><span class="line"><span class="number">2.</span>在仓库目录终端下 - 设置局部用户</span><br><span class="line">&gt;: git config user.name <span class="string">&#x27;lhj&#x27;</span></span><br><span class="line">	-- 用户名</span><br><span class="line">&gt;: git config user.email <span class="string">&#x27;lhj@qq.com&#x27;</span></span><br><span class="line">	-- 用户邮箱</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">注：在当前仓库下的config新建用户信息，只能在当前仓库下使用</span></span><br><span class="line"><span class="string">注：一个仓库有局部用户，优先使用局部用户，没有配置再找全局用户</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="number">3.</span>撤销工作区操作：改、删</span><br><span class="line">&gt;: git checkout .</span><br><span class="line">	-- 撤销所有暂存区的提交</span><br><span class="line">&gt;: git checkout 文件名</span><br><span class="line">	-- 撤销某一文件的暂存区提交</span><br><span class="line">&gt;: git checkout -b dev </span><br><span class="line">    -- 新建分支dev并切换到该分支</span><br><span class="line"><span class="number">4.</span>查看当前分支</span><br><span class="line">&gt;: git branch -a </span><br><span class="line"><span class="number">5.</span>撤销版本库提交：commit的逆运算</span><br><span class="line">回滚暂存区已经提交到版本库的操作：</span><br><span class="line">    查看历史版本：</span><br><span class="line">        &gt;: git log</span><br><span class="line">        &gt;: git reflog</span><br><span class="line">    查看时间点之前|之后的日志：</span><br><span class="line">        &gt;: git log --after <span class="number">2018</span>-<span class="number">6</span>-<span class="number">1</span></span><br><span class="line">        &gt;: git log --before <span class="number">2018</span>-<span class="number">6</span>-<span class="number">1</span></span><br><span class="line">        &gt;: git reflog --after <span class="number">2018</span>-<span class="number">6</span>-<span class="number">1</span></span><br><span class="line">        &gt;: git reflog --before <span class="number">2018</span>-<span class="number">6</span>-<span class="number">1</span></span><br><span class="line">    查看指定开发者日志</span><br><span class="line">        &gt;: git log --author author_name</span><br><span class="line">        &gt;: git reflog --author author_name</span><br><span class="line">    回滚到指定版本：</span><br><span class="line">        回滚到上一个版本：</span><br><span class="line">            &gt;: git reset --hard HEAD^</span><br><span class="line">            &gt;: git reset --hard HEAD~</span><br><span class="line">        回滚到上三个版本：</span><br><span class="line">            &gt;: git reset --hard HEAD^^^</span><br><span class="line">            &gt;: git reset --hard HEAD~<span class="number">3</span></span><br><span class="line">        回滚到指定版本号的版本：</span><br><span class="line">            &gt;: git reset --hard 版本号 (重点)</span><br><span class="line">            &gt;: eg: git reset --hard 35cb292</span><br><span class="line">                   </span><br></pre></td></tr></table></figure>
+
+<h4 id="其它命令"><a href="#其它命令" class="headerlink" title="其它命令"></a>其它命令</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>）查看仓库已配置的远程源</span><br><span class="line">&gt;: git remote</span><br><span class="line">&gt;: git remote -v</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>）查看remote命令帮助文档</span><br><span class="line">&gt;: git remote -h</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>）删除远程源</span><br><span class="line">&gt;: git remote remove 源名</span><br><span class="line">eg: git remote remove origin</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>）添加远程源</span><br><span class="line">&gt;: git remote add 源名 源地址</span><br><span class="line">&gt;: git remote add orgin git@gitee.com:doctor_owen/luffyapi.git</span><br><span class="line"></span><br><span class="line"><span class="number">5</span>）提交代码到远程源</span><br><span class="line">&gt;: git push 源码 分支名</span><br><span class="line"></span><br><span class="line"><span class="number">6</span>）克隆远程源</span><br><span class="line">&gt;: git clone 远程源地址</span><br></pre></td></tr></table></figure>
+
+<h4 id="合并分支"><a href="#合并分支" class="headerlink" title="合并分支"></a>合并分支</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>查看当前所在分支</span><br><span class="line">$ git branch -a</span><br><span class="line">* master</span><br><span class="line">  remotes/origin/HEAD -&gt; origin/master</span><br><span class="line">  remotes/origin/master</span><br><span class="line"><span class="number">2.</span>创建新分支dev</span><br><span class="line">$ git checkout -b dev</span><br><span class="line">Switched to a new branch <span class="string">&#x27;dev&#x27;</span></span><br><span class="line"><span class="number">3.</span>查看新分支状态</span><br><span class="line">$ git status</span><br><span class="line">On branch dev</span><br><span class="line">Changes <span class="keyword">not</span> staged <span class="keyword">for</span> commit:</span><br><span class="line">...</span><br><span class="line">Untracked files:</span><br><span class="line">  (use <span class="string">&quot;git add &lt;file&gt;...&quot;</span> to include <span class="keyword">in</span> what will be committed)</span><br><span class="line">        .idea/.gitignore</span><br><span class="line">        .idea/inspectionProfiles/</span><br><span class="line">        .idea/misc.xml</span><br><span class="line">        .idea/modules.xml</span><br><span class="line">        .idea/vcs.xml</span><br><span class="line"><span class="number">4.</span>在dev分支开发</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;注释&quot;</span></span><br><span class="line">git push origin dev</span><br><span class="line"></span><br><span class="line"> * [new branch]      dev -&gt; dev</span><br><span class="line"><span class="number">5.</span>在主分支合并dev（先切换到master分支上）</span><br><span class="line">git  checkout master</span><br><span class="line"><span class="number">6.</span>协同开发需要先把远程代码pull下来</span><br><span class="line">git pull origin master</span><br><span class="line"></span><br><span class="line"> * branch            master     -&gt; FETCH_HEAD</span><br><span class="line">Already up to date.</span><br><span class="line"><span class="number">7.</span>合并分支</span><br><span class="line">git merge dev</span><br><span class="line"><span class="number">8.</span>查看状态及提交命令</span><br><span class="line">$ git status</span><br><span class="line">On branch master</span><br><span class="line">Your branch <span class="keyword">is</span> ahead of <span class="string">&#x27;origin/master&#x27;</span> by <span class="number">2</span> commits.</span><br><span class="line">  (use <span class="string">&quot;git push&quot;</span> to publish your local commits)</span><br><span class="line"></span><br><span class="line">nothing to commit, working tree clean</span><br><span class="line"><span class="number">9.</span>将本地变更提交到远程仓库</span><br><span class="line">git push origin master</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="冲突解决"><a href="#冲突解决" class="headerlink" title="冲突解决"></a>冲突解决</h4><ul>
+<li>冲突产生的原因：两个人在不同分支的同一个文件修改了不同的代码</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>在dev分支cs脚本新增如下代码提交到本地仓库</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dev</span>():</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;dev分分支测试&quot;</span>)</span><br><span class="line">dev()</span><br><span class="line"></span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;dev分支cs脚本新增内容&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>切换到master分支并在cs脚本新增如下代码提交到本地仓库</span><br><span class="line">git checkout master</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">master</span>():</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;master分分支测试&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">master()</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;master分支cs脚本新增内容&quot;</span></span><br><span class="line"><span class="number">3.</span>合并分支dev会产生冲突</span><br><span class="line">git merge dev</span><br><span class="line"></span><br><span class="line">CONFLICT (content): Merge conflict <span class="keyword">in</span> ATM/cs.py</span><br><span class="line">Automatic merge failed; fix conflicts <span class="keyword">and</span> then commit the result.</span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>冲突处理(&lt;&lt;&lt;&lt;&lt;&lt;&lt; ，=======，&gt;&gt;&gt;&gt;&gt;&gt;&gt; 标记了冲突出现的位置,对冲突文本进行选择修改，使用master分支，删除dev分支内容)</span><br><span class="line">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">master</span>():</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;master分分支测试&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">master()</span><br><span class="line">=======</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dev</span>():</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;dev分分支测试&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">dev()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt;&gt;&gt;&gt;&gt; dev</span><br><span class="line"><span class="number">5.</span>提交合并</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;使用master分支cs脚本，删除dev分层cs脚本内容&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="远程仓库"><a href="#远程仓库" class="headerlink" title="远程仓库"></a>远程仓库</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">简易的命令行入门教程:</span><br><span class="line">Git 全局设置:</span><br><span class="line"></span><br><span class="line">git config --<span class="keyword">global</span> user.name <span class="string">&quot;xxx&quot;</span></span><br><span class="line">git config --<span class="keyword">global</span> user.email <span class="string">&quot;1026170773@qq.com&quot;</span></span><br><span class="line">创建 git 仓库:</span><br><span class="line"></span><br><span class="line">mkdir luufy</span><br><span class="line">cd luufy</span><br><span class="line">git init</span><br><span class="line"></span><br><span class="line">git commit -m <span class="string">&quot;first commit&quot;</span></span><br><span class="line">git remote add origin https://gitee.com/liuhaojie_199556/luufy.git</span><br><span class="line">git push  origin master</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="采用ssh协议连接远程源"><a href="#采用ssh协议连接远程源" class="headerlink" title="采用ssh协议连接远程源"></a>采用ssh协议连接远程源</h4><ul>
+<li><a target="_blank" rel="noopener" href="https://gitee.com/help/articles/4181#article-header0">https://gitee.com/help/articles/4181#article-header0</a></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">本机命令，生成公钥：ssh-keygen -t rsa -C <span class="string">&quot;1026170773@qq.com&quot;</span></span><br><span class="line">	邮箱可以任意填写</span><br><span class="line">本机命令，查看公钥：cat ~/.ssh/id_rsa.pub</span><br><span class="line"></span><br><span class="line">码云线上添加公钥：项目仓库 =&gt; 管理 =&gt; 部署公钥管理 =&gt; 添加公钥 =&gt; 添加个人公钥</span><br></pre></td></tr></table></figure>
+
+<h4 id="协同开发"><a href="#协同开发" class="headerlink" title="协同开发"></a>协同开发</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>）作为开发者，第一次同步项目（前台已经是项目开发者了）</span><br><span class="line">&gt;: git clone 项目地址</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>）保证自己本地有dev分支，且与远程仓库版本同步(没有就自己新建)</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>）本地开发的代码，必须add、commit到本地版本库后，才和远程仓库进行交互</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>）交互顺序：必须 先拉(pull)后提(push)</span><br><span class="line"></span><br><span class="line"><span class="number">5</span>）必须切换到要交互的分支，在与远程同名的分支进行交互，如本地dev与远程dev交互</span><br><span class="line">&gt;: git checkout dev</span><br><span class="line">&gt;: git add .</span><br><span class="line">&gt;: git commit -m <span class="string">&#x27;本次提交的信息提示&#x27;</span></span><br><span class="line">&gt;: git pull origin dev</span><br><span class="line">&gt;: git push origin dev</span><br></pre></td></tr></table></figure>
+
+<h4 id="远程仓库回滚"><a href="#远程仓库回滚" class="headerlink" title="远程仓库回滚"></a>远程仓库回滚</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">用dev分支举例</span><br><span class="line"><span class="number">1</span>）本地切换到远程要回滚的分支对应的本地分支</span><br><span class="line">git checkout dev</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>）回滚本地分支</span><br><span class="line">git reset --hard 版本号</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>）本地版本强行提交给服务器</span><br><span class="line">git push origin dev -f</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+	  
+	  
+		   <div>
+			 <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:20px;">-------------End-------------</div>
+    
+</div>
+		   </div>
+	   
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/git/" rel="tag"># git</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/12/10/Go/" rel="prev" title="Go">
+      <i class="fa fa-chevron-left"></i> Go
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E5%91%BD%E4%BB%A4"><span class="nav-number">2.</span> <span class="nav-text">其它命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E5%88%86%E6%94%AF"><span class="nav-number">3.</span> <span class="nav-text">合并分支</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3"><span class="nav-number">4.</span> <span class="nav-text">冲突解决</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93"><span class="nav-number">5.</span> <span class="nav-text">远程仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%87%E7%94%A8ssh%E5%8D%8F%E8%AE%AE%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8B%E6%BA%90"><span class="nav-number">6.</span> <span class="nav-text">采用ssh协议连接远程源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%8F%E5%90%8C%E5%BC%80%E5%8F%91"><span class="nav-number">7.</span> <span class="nav-text">协同开发</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E5%9B%9E%E6%BB%9A"><span class="nav-number">8.</span> <span class="nav-text">远程仓库回滚</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Admin"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Admin</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021-07 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Admin</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+
+
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共151.4k字</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
